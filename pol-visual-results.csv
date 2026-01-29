@@ -1,0 +1,6 @@
+Scenario,Witnesses,Quorum,Radius,Successful,Failed,SuccessRate,TP,FP,TN,FN,Precision,Recall,F1
+Baseline-4W,4,3,20.0,30,0,100.0,30,0,0,0,1.000,1.000,1.000
+Baseline-6W,6,4,20.0,30,0,100.0,30,0,0,0,1.000,1.000,1.000
+DistanceFraud,4,3,20.0,0,30,0.0,0,0,30,0,0.000,0.000,0.000
+EdgePosition,4,3,20.0,5,25,16.7,5,0,0,25,1.000,0.167,0.286
+VisualVerification-RedCar,4,3,20.0,8,2,80.0,8,0,0,2,1.000,0.800,0.889

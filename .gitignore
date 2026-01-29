@@ -1,0 +1,8 @@
+__pycache__/
+*.pyc
+venv/
+.DS_Store
+*.pdf
+*.png
+pol-results.json
+pol-results.csv

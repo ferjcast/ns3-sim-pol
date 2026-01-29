@@ -1,0 +1,98 @@
+[
+  {
+    "configuration": {
+      "n_witnesses": 4,
+      "quorum_k": 3,
+      "zone_radius": 20.0
+    },
+    "performance": {
+      "total_claims": 30,
+      "successful_attestations": 30,
+      "failed_attestations": 0,
+      "success_rate": 1.0
+    },
+    "security": {
+      "true_positives": 30,
+      "false_positives": 0,
+      "true_negatives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "scenario": "Baseline-4W",
+    "elapsed_time": 0.005361080169677734
+  },
+  {
+    "configuration": {
+      "n_witnesses": 6,
+      "quorum_k": 4,
+      "zone_radius": 20.0
+    },
+    "performance": {
+      "total_claims": 30,
+      "successful_attestations": 30,
+      "failed_attestations": 0,
+      "success_rate": 1.0
+    },
+    "security": {
+      "true_positives": 30,
+      "false_positives": 0,
+      "true_negatives": 0,
+      "false_negatives": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1_score": 1.0
+    },
+    "scenario": "Baseline-6W",
+    "elapsed_time": 0.007467031478881836
+  },
+  {
+    "configuration": {
+      "n_witnesses": 4,
+      "quorum_k": 3,
+      "zone_radius": 20.0
+    },
+    "performance": {
+      "total_claims": 30,
+      "successful_attestations": 0,
+      "failed_attestations": 30,
+      "success_rate": 0.0
+    },
+    "security": {
+      "true_positives": 0,
+      "false_positives": 0,
+      "true_negatives": 30,
+      "false_negatives": 0,
+      "precision": 0,
+      "recall": 0,
+      "f1_score": 0
+    },
+    "scenario": "DistanceFraud",
+    "elapsed_time": 0.0049250125885009766
+  },
+  {
+    "configuration": {
+      "n_witnesses": 4,
+      "quorum_k": 3,
+      "zone_radius": 20.0
+    },
+    "performance": {
+      "total_claims": 30,
+      "successful_attestations": 0,
+      "failed_attestations": 30,
+      "success_rate": 0.0
+    },
+    "security": {
+      "true_positives": 0,
+      "false_positives": 0,
+      "true_negatives": 0,
+      "false_negatives": 30,
+      "precision": 0,
+      "recall": 0.0,
+      "f1_score": 0
+    },
+    "scenario": "EdgePosition",
+    "elapsed_time": 0.00799107551574707
+  }
+]
