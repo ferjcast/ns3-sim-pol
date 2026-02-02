@@ -15,9 +15,13 @@ from pol_simulation import (
 def run_visualization_scenario():
     print("Setting up simulation scenario...")
     # Config
-    radius = 20.0
-    config = ZoneConfig(radius=radius, n_witnesses=4, quorum_k=3)
-    policy = SupplyChainPolicy(max_distance=radius * 1.5) 
+    # To have a valid 3-witness intersection with 20m sensing range, witnesses must be closer.
+    # Placement Radius = 12.0m (Witnesses at ~8.5m from center)
+    config_radius = 12.0
+    config = ZoneConfig(radius=config_radius, n_witnesses=4, quorum_k=3)
+    
+    # We use a larger max_distance for policy to allow covering the whole intersection
+    policy = SupplyChainPolicy(max_distance=25.0) 
     
     sim = PolSimulation(config, policy)
     sim.create_witnesses()
@@ -65,21 +69,21 @@ def plot_results(sim, prover):
     # Plot Zone Definition (Quorum Intersection)
     # Create grid to compute coverage
     grid_res = 0.5
-    gx = np.arange(-30, 30, grid_res)
-    gy = np.arange(-30, 30, grid_res)
+    gx = np.arange(-25, 25, grid_res)
+    gy = np.arange(-25, 25, grid_res)
     XX, YY = np.meshgrid(gx, gy)
     
     # Count witnesses covering each point
     coverage = np.zeros_like(XX, dtype=int)
-    witness_radius = 20.0
+    witness_sensing_range = 20.0
     
     for w in sim.witnesses:
         # Distance squared
         d2 = (XX - w.position.x)**2 + (YY - w.position.y)**2
-        coverage[d2 <= witness_radius**2] += 1
+        coverage[d2 <= witness_sensing_range**2] += 1
         
         # Plot individual witness circle
-        circle = plt.Circle((w.position.x, w.position.y), witness_radius, 
+        circle = plt.Circle((w.position.x, w.position.y), witness_sensing_range, 
                            fill=False, linestyle=':', color='blue', alpha=0.3)
         ax.add_patch(circle)
 
@@ -90,9 +94,9 @@ def plot_results(sim, prover):
     
     # Add dummy patch for legend
     import matplotlib.patches as mpatches
-    zone_patch = mpatches.Patch(color='#2ca02c', alpha=0.2, label=f'Effective Zone (k>={sim.config.quorum_k})')
-    # Add dummy line for witness range
-    witness_range_line = plt.Line2D([0], [0], color='blue', linestyle=':', alpha=0.3, label='Witness Range (20m)')
+    zone_patch = mpatches.Patch(color='#2ca02c', alpha=0.2, label=f'Effective Zone (k={sim.config.quorum_k})')
+    # Add dummy line for witness sensing range
+    witness_range_line = plt.Line2D([0], [0], color='blue', linestyle=':', alpha=0.3, label=f'Sensor Range ({witness_sensing_range}m)')
     
     # Update legend handles later
     extra_handles = [zone_patch, witness_range_line]
