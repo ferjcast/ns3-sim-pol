@@ -151,33 +151,7 @@ def plot_results(sim, prover):
     ax.scatter([9.28], [0.0], c='orange', marker='X', s=200, zorder=6, label='Edge Case')
     ax.annotate("Edge Case (9.28,0)", (9.28, 0.0), xytext=(-10, 10), textcoords='offset points', 
                 ha='right', fontsize=12, fontweight='bold', color='orange')
-    # Plot Path/Attestations
-    valid_x, valid_y = [], []
-    invalid_x, invalid_y = [], []
-    
-    # Sort attestations by time to draw line
-    sorted_attestations = sorted(prover.attestations, key=lambda a: a.timestamp)
-    
-    # Draw continuous trajectory with color coding (Dense Geometric approach)
-    # We simulate the path geometrically to ensure a solid line
-    
-    # Path definition (Shifted +3 Y to match simulation and avoid clutter)
-    start_viz = np.array([-25.0, -22.0])
-    end_viz = np.array([30.0, 33.0])
-    steps = 200
-    
-    path_points = []
-    for i in range(steps + 1):
-        t = i / steps
-        pt = start_viz + t * (end_viz - start_viz)
-        path_points.append(pt)
-        
-    # Plot simple path (black dashed)
-    path_arr = np.array(path_points)
-    ax.plot(path_arr[:,0], path_arr[:,1], color='black', linestyle='--', linewidth=2.0, label='Prover Trajectory', alpha=0.7)
-                
-
-
+    # (Prover trajectory removed for cleaner visualization)
     # Add labels and styling
     ax.set_aspect('equal')
     ax.set_xlim(-25, 35)
