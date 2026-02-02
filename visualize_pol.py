@@ -62,10 +62,40 @@ def plot_results(sim, prover):
     print("Generating plot...")
     fig, ax = plt.subplots(figsize=(12, 12))
     
-    # Plot Zone
-    circle = plt.Circle((sim.config.center.x, sim.config.center.y), sim.config.radius, 
-                        fill=False, linestyle='--', color='gray', linewidth=2, label='Zone Boundary (20m)')
-    ax.add_patch(circle)
+    # Plot Zone Definition (Quorum Intersection)
+    # Create grid to compute coverage
+    grid_res = 0.5
+    gx = np.arange(-30, 30, grid_res)
+    gy = np.arange(-30, 30, grid_res)
+    XX, YY = np.meshgrid(gx, gy)
+    
+    # Count witnesses covering each point
+    coverage = np.zeros_like(XX, dtype=int)
+    witness_radius = 20.0
+    
+    for w in sim.witnesses:
+        # Distance squared
+        d2 = (XX - w.position.x)**2 + (YY - w.position.y)**2
+        coverage[d2 <= witness_radius**2] += 1
+        
+        # Plot individual witness circle
+        circle = plt.Circle((w.position.x, w.position.y), witness_radius, 
+                           fill=False, linestyle=':', color='blue', alpha=0.3)
+        ax.add_patch(circle)
+
+    # Plot effective zone (coverage >= quorum_k)
+    # Using contourf to fill the intersection
+    ax.contourf(XX, YY, coverage, levels=[sim.config.quorum_k - 0.1, 10], 
+               colors=['#2ca02c'], alpha=0.2)
+    
+    # Add dummy patch for legend
+    import matplotlib.patches as mpatches
+    zone_patch = mpatches.Patch(color='#2ca02c', alpha=0.2, label=f'Effective Zone (k>={sim.config.quorum_k})')
+    # Add dummy line for witness range
+    witness_range_line = plt.Line2D([0], [0], color='blue', linestyle=':', alpha=0.3, label='Witness Range (20m)')
+    
+    # Update legend handles later
+    extra_handles = [zone_patch, witness_range_line]
     
     # Plot Witnesses
     wx = [w.position.x for w in sim.witnesses]
@@ -129,18 +159,22 @@ def plot_results(sim, prover):
                 color=color, linewidth=5.0, alpha=0.9, zorder=2, solid_capstyle='round')
                 
     # Add dummy lines for legend
-    ax.plot([], [], color='#2ca02c', linewidth=5.0, label='Admitted Zone')
-    ax.plot([], [], color='#d62728', linewidth=5.0, label='Rejected Zone')
+    ax.plot([], [], color='#2ca02c', linewidth=5.0, label='Admitted Path')
+    ax.plot([], [], color='#d62728', linewidth=5.0, label='Rejected Path')
 
     # Add labels and styling
     ax.set_aspect('equal')
     ax.set_xlim(-25, 35)
     ax.set_ylim(-25, 35)
     ax.grid(True, linestyle=':', alpha=0.6)
-    ax.legend(loc='upper left', framealpha=0.9, fancybox=True, shadow=True, fontsize=14)
     
-    ax.set_title("PoL Witnessing Simulation: Prover Trajectory Visualization\n"
-                 "Green: Admitted (Inside Zone), Red: Rejected (Outside or Violation)", fontsize=14)
+    # Combine standard handles with our custom ones
+    handles, labels = ax.get_legend_handles_labels()
+    handles.extend(extra_handles)
+    ax.legend(handles=handles, loc='upper left', framealpha=0.9, fancybox=True, shadow=True, fontsize=10)
+    
+    ax.set_title("PoL Witnessing Simulation: Quorum-Based Zone Visualization\n"
+                 "Zone defined by intersection of 3+ Witness Ranges (20m)", fontsize=14)
     ax.set_xlabel("X Position (meters)")
     ax.set_ylabel("Y Position (meters)")
     
