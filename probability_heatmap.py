@@ -161,8 +161,8 @@ def plot_heatmap(X, Y, prob_grid, witnesses, output_file: str = "probability_hea
     ax.set_ylim(-15, 15)
     ax.set_xlabel('X Position (m)', fontsize=12)
     ax.set_ylabel('Y Position (m)', fontsize=12)
-    ax.set_title('PoL Admission Probability Heatmap\n(Analytical Model: k≥3/4 witnesses within 20m)', 
-                 fontsize=14, fontweight='bold')
+    # ax.set_title('PoL Admission Probability Heatmap\n(Analytical Model: k≥3/4 witnesses within 20m)', 
+    #              fontsize=14, fontweight='bold')
     ax.set_aspect('equal')
     ax.grid(True, alpha=0.3)
     ax.legend(loc='upper right')
