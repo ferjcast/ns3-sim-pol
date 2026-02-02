@@ -133,9 +133,10 @@ def plot_heatmap(X, Y, prob_grid, witnesses, output_file: str = "probability_hea
                     fontsize=10, fontweight='bold', color='white')
     
     # Draw 20m range circles around each witness (faintly)
-    for wx, wy in witnesses:
+    for i, (wx, wy) in enumerate(witnesses):
+        label = 'Sensor Range (20m)' if i == 0 else None  # Only label once
         circle = Circle((wx, wy), MAX_DISTANCE, fill=False, color='blue', 
-                        linestyle='--', alpha=0.3, linewidth=1)
+                        linestyle='--', alpha=0.3, linewidth=1, label=label)
         ax.add_patch(circle)
     
     # Mark key positions
@@ -146,8 +147,6 @@ def plot_heatmap(X, Y, prob_grid, witnesses, output_file: str = "probability_hea
                 textcoords='offset points', fontsize=10, fontweight='bold',
                 color='orange', ha='left')
     
-    # Center position
-    ax.plot(0, 0, 'x', color='black', markersize=10, markeredgewidth=2, zorder=6)
     
     # Contour lines for 10%, 50%, 90% probability
     contour_levels = [0.1, 0.5, 0.9]
