@@ -118,7 +118,7 @@ def plot_results(sim, prover):
             ax.plot(x, y, color='#2ca02c', linewidth=1)
 
     # Add dummy patch for legend
-    zone_patch = mpatches.Patch(color='#2ca02c', alpha=0.2, label=f'Effective Zone (k={sim.config.quorum_k})')
+    zone_patch = mpatches.Patch(color='#2ca02c', alpha=0.2, label=f'Effective Zone (k>={sim.config.quorum_k})')
     # Add dummy line for witness sensing range
     witness_range_line = plt.Line2D([0], [0], color='blue', linestyle=':', alpha=0.3, label=f'Sensor Range ({witness_sensing_range}m)')
     
