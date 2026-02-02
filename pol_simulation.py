@@ -607,7 +607,7 @@ class WitnessNode:
         admit_votes = sum(1 for v in all_votes if v.admit)
         quorum_reached = len(all_votes) >= self.config.quorum_k
         admitted = admit_votes >= self.config.quorum_k
-
+        
         if quorum_reached:
             claim = self.pending_claims.get(claim_id)
             if claim:
@@ -928,7 +928,7 @@ def run_scenario(name: str, n_witnesses: int, quorum: int, radius: float,
 
     # Create policy
     policy = SupplyChainPolicy(
-        max_distance=radius * 2.0,  # Cover zone diagonal
+        max_distance=20.0,  # Fixed sensor range (20m)
         rf_threshold=0.5
     )
 
@@ -977,8 +977,9 @@ def _run_single_simulation(name: str, n_witnesses: int, quorum: int, radius: flo
     )
 
     # Create policy
+    # Create policy
     policy = SupplyChainPolicy(
-        max_distance=radius * 2.0,  # Cover zone diagonal
+        max_distance=20.0,  # Fixed sensor range (20m)
         rf_threshold=0.5
     )
 
@@ -1185,7 +1186,7 @@ def main():
             ("DistanceFraud", 4, 3, 12.0, 60.0, Vector3(30, 30, 1.5), AttackType.DISTANCE_FRAUD),
 
             # Edge position
-            ("EdgePosition", 4, 3, 12.0, 60.0, Vector3(10, 0, 1.5), AttackType.NONE),
+            ("EdgePosition", 4, 3, 12.0, 60.0, Vector3(12, 0, 1.5), AttackType.NONE),
         ]
 
         for name, nw, q, r, t, pos, attack in scenarios:
