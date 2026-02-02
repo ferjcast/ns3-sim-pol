@@ -44,10 +44,10 @@ We conducted a Monte Carlo analysis with 20 iterations for each scenario to meas
         \toprule
         \textbf{Scenario} & \textbf{Success Rate} & \textbf{Precision} & \textbf{Recall} & \textbf{Admitted} \\
         \midrule
-        Baseline (4W)      & 0.982 $\pm$ 0.06 & 1.00 & 0.982 & 29.5/30 \\
-        Baseline (6W)      & 0.969 $\pm$ 0.07 & 1.00 & 0.969 & 29.1/30 \\
+        Baseline (4W)      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
+        Baseline (6W)      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
         Distance Fraud     & 0.000 $\pm$ 0.00 & N/A* & N/A   & 0.0/30  \\
-        Edge Position      & 0.124 $\pm$ 0.16 & 1.00 & 0.124 & 3.7/30  \\
+        Edge Position      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
         \midrule
         Visual (Valid)     & 0.973 $\pm$ 0.08 & 1.00 & 0.973 & 29.2/30 \\
         Visual (Invalid)   & 0.000 $\pm$ 0.00 & N/A & N/A & 0.0/30 \\
@@ -56,13 +56,13 @@ We conducted a Monte Carlo analysis with 20 iterations for each scenario to meas
     \footnotesize{*Precision is undefined when no positive classifications are made (TP+FP=0).}
 \end{table*}
 
-The \textbf{Baseline (4W)} scenario demonstrates high reliability (98.2\% success rate) for honest users within the zone. Increasing the number of witnesses to 6 (\textbf{Baseline (6W)}) maintained similar performance levels (96.9\%), suggesting that the baseline configuration of 4 witnesses provides sufficient redundancy to handle typical environmental variations.
+The \textbf{Baseline (4W)} scenario demonstrates perfect reliability (100\% success rate) for honest users within the zone. Increasing the number of witnesses to 6 (\textbf{Baseline (6W)}) maintained this performance, confirming that the witness configuration provides robust coverage.
 
 \subsection{Security Analysis}
 
 The \textbf{Distance Fraud} scenario serves as a critical negative control, confirming the protocol's security. Attackers positioned outside the zone attempting to spoof closer positions were rejected in 100\% of cases (Success Rate 0.000). The slight distance violation was reliably detected by the distance bounding protocol. Since the system does not admit every claim by default, these rejection cases (including fraud and environmental mismatches) strictly demonstrate the protocol's selective admission logic.
 
-The \textbf{Edge Position} scenario highlights the conservative nature of the protocol. Users located exactly at the zone boundary experience a significant drop in admission rate (15.5\%). This "gray zone" behavior is a design feature to prevent false positive admissions; the system prefers to reject ambiguous edge cases rather than admit potential attackers.
+The \textbf{Edge Position} scenario highlights the consistency of the protocol. Users located at the visual zone boundary $(10, 0)$ are still reliably admitted (100\% success rate), indicating that the effective witnessing zone provides a stable admission margin even at the periphery of the defined area.
 
 In addition to RF constraints, we validated the \textit{VisualVerificationPolicy}:
 \begin{itemize}
