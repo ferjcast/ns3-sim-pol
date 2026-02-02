@@ -184,8 +184,9 @@ def plot_results(sim, prover):
     handles.extend(extra_handles)
     ax.legend(handles=handles, loc='upper left', framealpha=0.9, fancybox=True, shadow=True, fontsize=10)
     
-    ax.set_title("PoL Witnessing Simulation: Quorum-Based Zone Visualization\n"
-                 "Zone defined by intersection of 3+ Witness Ranges (20m)", fontsize=14)
+    # Title removed for report
+    # ax.set_title(...)
+    
     ax.set_xlabel("X Position (meters)")
     ax.set_ylabel("Y Position (meters)")
     
