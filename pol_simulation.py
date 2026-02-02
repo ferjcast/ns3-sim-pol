@@ -1186,7 +1186,7 @@ def main():
             ("DistanceFraud", 4, 3, 12.0, 60.0, Vector3(30, 30, 1.5), AttackType.DISTANCE_FRAUD),
 
             # Edge position (Probabilistic Boundary)
-            ("EdgePosition", 4, 3, 12.0, 60.0, Vector3(9.23, 0, 1.5), AttackType.NONE),
+            ("EdgePosition", 4, 3, 12.0, 60.0, Vector3(9.28, 0, 1.5), AttackType.NONE),
         ]
 
         for name, nw, q, r, t, pos, attack in scenarios:

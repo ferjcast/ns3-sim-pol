@@ -47,7 +47,7 @@ We conducted a Monte Carlo analysis with 20 iterations for each scenario to meas
         Baseline (4W)      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
         Baseline (6W)      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
         Distance Fraud     & 0.000 $\pm$ 0.00 & N/A* & N/A   & 0.0/30  \\
-        Edge Position      & 0.787 $\pm$ 0.09 & 1.00 & 0.787 & 23.6/30 \\
+        Edge Position      & 0.370 $\pm$ 0.10 & 1.00 & 0.370 & 11.1/30 \\
         \midrule
         Visual (Valid)     & 0.973 $\pm$ 0.08 & 1.00 & 0.973 & 29.2/30 \\
         Visual (Invalid)   & 0.000 $\pm$ 0.00 & N/A & N/A & 0.0/30 \\
@@ -62,7 +62,7 @@ The \textbf{Baseline (4W)} scenario demonstrates perfect reliability (100\% succ
 
 The \textbf{Distance Fraud} scenario serves as a critical negative control, confirming the protocol's security. Attackers positioned outside the zone attempting to spoof closer positions were rejected in 100\% of cases (Success Rate 0.000). The slight distance violation was reliably detected by the distance bounding protocol. Since the system does not admit every claim by default, these rejection cases (including fraud and environmental mismatches) strictly demonstrate the protocol's selective admission logic.
 
-The \textbf{Edge Position} scenario highlights the precision of the protocol. Users located at the calculated boundary $(9.23, 0)$ are admitted with a probabilistic success rate of $78.7\% \pm 9\%$, rather than strictly 0\% or 100\%. This validates that the system correctly models sensor noise, where small fluctuations in distance measurement can flip the admission decision at the very edge of the zone.
+The \textbf{Edge Position} scenario highlights the precision of the protocol at its geometric boundary. Users located at the calculated zone edge $(9.28, 0)$ are admitted with a probabilistic success rate of $37.0\% \pm 10\%$, rather than strictly 0\% or 100\%. This validates that the system correctly models sensor noise, where small fluctuations in distance measurement can flip the admission decision at the very edge of the zone.
 
 In addition to RF constraints, we validated the \textit{VisualVerificationPolicy}:
 \begin{itemize}
