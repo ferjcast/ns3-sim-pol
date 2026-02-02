@@ -187,8 +187,9 @@ def plot_results(sim, prover):
     # Title removed for report
     # ax.set_title(...)
     
-    ax.set_xlabel("X Position (meters)")
-    ax.set_ylabel("Y Position (meters)")
+    ax.set_xlabel("X Position (meters)", fontsize=16)
+    ax.set_ylabel("Y Position (meters)", fontsize=16)
+    ax.tick_params(axis='both', which='major', labelsize=14)
     ax.set_xlim(-17, 17)
     ax.set_ylim(-17, 17)
     plt.savefig('pol_visualization.pdf', bbox_inches='tight')
