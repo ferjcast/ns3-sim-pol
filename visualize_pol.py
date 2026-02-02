@@ -146,6 +146,11 @@ def plot_results(sim, prover):
                    (obj.position.x, obj.position.y), 
                    xytext=(5, -15), textcoords='offset points', ha='center', fontsize=12, fontweight='bold')
 
+
+    # Plot Edge Position (Critical for evaluation)
+    ax.scatter([15.0], [15.0], c='orange', marker='X', s=200, zorder=6, label='Edge Case')
+    ax.annotate("Edge Case (15,15)", (15.0, 15.0), xytext=(-10, 10), textcoords='offset points', 
+                ha='right', fontsize=12, fontweight='bold', color='orange')
     # Plot Path/Attestations
     valid_x, valid_y = [], []
     invalid_x, invalid_y = [], []
