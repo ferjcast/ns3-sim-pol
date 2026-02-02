@@ -1160,7 +1160,7 @@ def main():
     parser = argparse.ArgumentParser(description='PoL Witnessing Zone Simulation')
     parser.add_argument('--witnesses', type=int, default=4, help='Number of witnesses')
     parser.add_argument('--quorum', type=int, default=3, help='Quorum threshold')
-    parser.add_argument('--radius', type=float, default=20.0, help='Zone radius (m)')
+    parser.add_argument('--radius', type=float, default=12.0, help='Zone radius (m)')
     parser.add_argument('--time', type=float, default=60.0, help='Simulation time (s)')
     parser.add_argument('--output', type=str, default='pol-results', help='Output file prefix')
     parser.add_argument('--verbose', action='store_true', help='Verbose output')
@@ -1178,14 +1178,14 @@ def main():
         # Run baseline scenarios from spec
         scenarios = [
             # Baseline scenarios
-            ("Baseline-4W", 4, 3, 20.0, 60.0, Vector3(5, 5, 1.5), AttackType.NONE),
-            ("Baseline-6W", 6, 4, 20.0, 60.0, Vector3(5, 5, 1.5), AttackType.NONE),
+            ("Baseline-4W", 4, 3, 12.0, 60.0, Vector3(5, 5, 1.5), AttackType.NONE),
+            ("Baseline-6W", 6, 4, 12.0, 60.0, Vector3(5, 5, 1.5), AttackType.NONE),
 
             # Attack scenarios
-            ("DistanceFraud", 4, 3, 20.0, 60.0, Vector3(30, 30, 1.5), AttackType.DISTANCE_FRAUD),
+            ("DistanceFraud", 4, 3, 12.0, 60.0, Vector3(30, 30, 1.5), AttackType.DISTANCE_FRAUD),
 
             # Edge position
-            ("EdgePosition", 4, 3, 20.0, 60.0, Vector3(15, 15, 1.5), AttackType.NONE),
+            ("EdgePosition", 4, 3, 12.0, 60.0, Vector3(10, 0, 1.5), AttackType.NONE),
         ]
 
         for name, nw, q, r, t, pos, attack in scenarios:
