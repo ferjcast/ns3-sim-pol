@@ -11,6 +11,11 @@ from pol_simulation import (
     ZoneConfig, SupplyChainPolicy, PolSimulation, Vector3, 
     ObjectType, AttackType
 )
+import itertools
+from shapely.geometry import Point
+from shapely.ops import unary_union
+from matplotlib.patches import Polygon as MatplotlibPolygon
+import matplotlib.patches as mpatches
 
 def run_visualization_scenario():
     print("Setting up simulation scenario...")
@@ -27,9 +32,9 @@ def run_visualization_scenario():
     sim.create_witnesses()
     
     # Add scene objects - Visual context
-    sim.add_scene_object("obj1", ObjectType.CAR, "red", Vector3(10, 5, 0))
-    sim.add_scene_object("obj2", ObjectType.TRUCK, "blue", Vector3(-10, 15, 0))
-    sim.add_scene_object("obj3", ObjectType.CONTAINER, "orange", Vector3(-5, -10, 0))
+    sim.add_scene_object("obj1", ObjectType.CAR, "red", Vector3(5, 5, 0))
+    sim.add_scene_object("obj2", ObjectType.TRUCK, "blue", Vector3(-5, 10, 0))
+    sim.add_scene_object("obj3", ObjectType.CONTAINER, "orange", Vector3(0, -8, 0))
     
     # Create prover starting outside
     start_pos = Vector3(-25, -22, 1.5)
@@ -66,34 +71,53 @@ def plot_results(sim, prover):
     print("Generating plot...")
     fig, ax = plt.subplots(figsize=(12, 12))
     
-    # Plot Zone Definition (Quorum Intersection)
-    # Create grid to compute coverage
-    grid_res = 0.5
-    gx = np.arange(-25, 25, grid_res)
-    gy = np.arange(-25, 25, grid_res)
-    XX, YY = np.meshgrid(gx, gy)
-    
-    # Count witnesses covering each point
-    coverage = np.zeros_like(XX, dtype=int)
+    # Plot Zone Definition (Quorum Intersection using Shapely)
     witness_sensing_range = 20.0
     
+    # Create circles for each witness
+    circles = []
     for w in sim.witnesses:
-        # Distance squared
-        d2 = (XX - w.position.x)**2 + (YY - w.position.y)**2
-        coverage[d2 <= witness_sensing_range**2] += 1
+        p = Point(w.position.x, w.position.y)
+        circles.append(p.buffer(witness_sensing_range))
         
         # Plot individual witness circle
-        circle = plt.Circle((w.position.x, w.position.y), witness_sensing_range, 
+        circle_patch = plt.Circle((w.position.x, w.position.y), witness_sensing_range, 
                            fill=False, linestyle=':', color='blue', alpha=0.3)
-        ax.add_patch(circle)
+        ax.add_patch(circle_patch)
 
-    # Plot effective zone (coverage >= quorum_k)
-    # Using contourf to fill the intersection
-    ax.contourf(XX, YY, coverage, levels=[sim.config.quorum_k - 0.1, 10], 
-               colors=['#2ca02c'], alpha=0.2)
+    # Calculate k-intersection
+    # The zone is the union of all intersections of at least k witnesses
+    intersections = []
+    k = sim.config.quorum_k
     
+    for combo in itertools.combinations(circles, k):
+        # Start with the first circle in the combo
+        intersection = combo[0]
+        for circle in combo[1:]:
+            intersection = intersection.intersection(circle)
+        
+        if not intersection.is_empty:
+            intersections.append(intersection)
+            
+    # The effective zone is the union of all these k-intersections
+    effective_zone = unary_union(intersections)
+    
+    # Plot effective zone
+    if not effective_zone.is_empty:
+        if effective_zone.geom_type == 'Polygon':
+            polys = [effective_zone]
+        elif effective_zone.geom_type == 'MultiPolygon':
+            polys = effective_zone.geoms
+        else:
+            polys = []
+            
+        for poly in polys:
+            x, y = poly.exterior.xy
+            ax.fill(x, y, color='#2ca02c', alpha=0.2)
+            # Add simple border
+            ax.plot(x, y, color='#2ca02c', linewidth=1)
+
     # Add dummy patch for legend
-    import matplotlib.patches as mpatches
     zone_patch = mpatches.Patch(color='#2ca02c', alpha=0.2, label=f'Effective Zone (k={sim.config.quorum_k})')
     # Add dummy line for witness sensing range
     witness_range_line = plt.Line2D([0], [0], color='blue', linestyle=':', alpha=0.3, label=f'Sensor Range ({witness_sensing_range}m)')
