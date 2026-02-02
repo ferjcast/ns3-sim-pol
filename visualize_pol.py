@@ -147,24 +147,11 @@ def plot_results(sim, prover):
         pt = start_viz + t * (end_viz - start_viz)
         path_points.append(pt)
         
-    for i in range(len(path_points) - 1):
-        p1 = path_points[i]
-        p2 = path_points[i+1]
-        mid = (p1 + p2) / 2
-        
-        # Check distance to center (0,0)
-        dist = np.linalg.norm(mid)
-        is_inside = dist <= sim.config.radius
-        
-        # Color based on geometric truth
-        color = '#2ca02c' if is_inside else '#d62728'  # Matplotlib standard Green/Red
-        
-        ax.plot([p1[0], p2[0]], [p1[1], p2[1]], 
-                color=color, linewidth=5.0, alpha=0.9, zorder=2, solid_capstyle='round')
+    # Plot simple path (black dashed)
+    path_arr = np.array(path_points)
+    ax.plot(path_arr[:,0], path_arr[:,1], color='black', linestyle='--', linewidth=2.0, label='Prover Trajectory', alpha=0.7)
                 
-    # Add dummy lines for legend
-    ax.plot([], [], color='#2ca02c', linewidth=5.0, label='Admitted Path')
-    ax.plot([], [], color='#d62728', linewidth=5.0, label='Rejected Path')
+
 
     # Add labels and styling
     ax.set_aspect('equal')
