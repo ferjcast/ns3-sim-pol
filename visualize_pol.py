@@ -134,10 +134,6 @@ def plot_results(sim, prover):
     for i, (x, y) in enumerate(zip(wx, wy)):
         ax.annotate(f"W{i}", (x, y), xytext=(5, 5), textcoords='offset points', fontweight='bold')
     
-    # Plot Beacons
-    bx = [b.position.x for b in sim.sensing.rf_sensor.beacons]
-    by = [b.position.y for b in sim.sensing.rf_sensor.beacons]
-    ax.scatter(bx, by, c='orange', marker='^', s=200, zorder=4, label='RF Beacons')
 
     # Plot Scene Objects
     ox = [o.position.x for o in sim.sensing.visual_sensor.scene_objects]
