@@ -189,8 +189,8 @@ def plot_results(sim, prover):
     
     ax.set_xlabel("X Position (meters)")
     ax.set_ylabel("Y Position (meters)")
-    
-    # Save
+    ax.set_xlim(-15, 15)
+    ax.set_ylim(-15, 15)
     plt.savefig('pol_visualization.pdf', bbox_inches='tight')
     plt.savefig('pol_visualization.png', dpi=100, bbox_inches='tight')
     print(f"Saved visualization to pol_visualization.pdf and pol_visualization.png")
