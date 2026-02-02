@@ -144,7 +144,7 @@ def plot_results(sim, prover):
     for obj in sim.sensing.visual_sensor.scene_objects:
         ax.annotate(f"{obj.color} {obj.obj_type.value}", 
                    (obj.position.x, obj.position.y), 
-                   xytext=(5, -15), textcoords='offset points', ha='center', fontsize=9)
+                   xytext=(5, -15), textcoords='offset points', ha='center', fontsize=12, fontweight='bold')
 
     # Plot Path/Attestations
     valid_x, valid_y = [], []
