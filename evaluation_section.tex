@@ -46,7 +46,7 @@ We conducted a Monte Carlo analysis with 20 iterations for each scenario to meas
         \midrule
         Baseline (4W)      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
         Baseline (6W)      & 1.000 $\pm$ 0.00 & 1.00 & 1.000 & 30.0/30 \\
-        Distance Fraud     & 0.000 $\pm$ 0.00 & N/A* & N/A   & 0.0/30  \\
+        Distance Fraud     & 0.000 $\pm$ 0.00 & N/A & N/A   & 0.0/30  \\
         Edge Position      & 0.359 $\pm$ 0.09 & 1.00 & 0.359 & 10.8/30 \\
         \midrule
         Visual (Valid)     & 0.973 $\pm$ 0.08 & 1.00 & 0.973 & 29.2/30 \\
@@ -63,6 +63,15 @@ The \textbf{Baseline (4W)} scenario demonstrates perfect reliability (100\% succ
 The \textbf{Distance Fraud} scenario serves as a critical negative control, confirming the protocol's security. Attackers positioned outside the zone attempting to spoof closer positions were rejected in 100\% of cases (Success Rate 0.000). The slight distance violation was reliably detected by the distance bounding protocol. Since the system does not admit every claim by default, these rejection cases (including fraud and environmental mismatches) strictly demonstrate the protocol's selective admission logic.
 
 The \textbf{Edge Position} scenario highlights the precision of the protocol at its geometric boundary. Users located at the calculated zone edge $(9.28, 0)$ are admitted with a probabilistic success rate of $35.9\% \pm 8.8\%$ (1000 Monte Carlo runs), rather than strictly 0\% or 100\%. This validates that the system correctly models sensor noise, where small fluctuations in distance measurement can flip the admission decision at the very edge of the zone.
+
+Figure~\ref{fig:prob_heatmap} presents an analytical probability heatmap that visualizes the admission probability across the entire zone. The heatmap was computed using the closed-form noise model rather than Monte Carlo sampling, showing smooth probability gradients from 100\% (green, center) to 0\% (red, outside). Contour lines at 10\%, 50\%, and 90\% probability highlight the transition region where sensor noise becomes the determining factor.
+
+\begin{figure}[t]
+    \centering
+    \includegraphics[width=0.8\columnwidth]{probability_heatmap.png}
+    \caption{Analytical admission probability heatmap showing the probabilistic transition zone at the boundary of the witnessing area.}
+    \label{fig:prob_heatmap}
+\end{figure}
 
 In addition to RF constraints, we validated the \textit{VisualVerificationPolicy}:
 \begin{itemize}
