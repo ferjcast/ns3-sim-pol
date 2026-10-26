@@ -1,0 +1,84 @@
+{
+  "version": "capture-sensitivity-v1",
+  "status": "Exploratory study, separate from the thesis and reviewer responses",
+  "seed": 2026102601,
+  "trials_per_condition": 100000,
+  "batches": 100,
+  "profile": {
+    "witnesses": 4,
+    "placement_radius_m": 20,
+    "witness_height_m": 3,
+    "prover_height_m": 1.5,
+    "range_limit_m": 40,
+    "range_bias_fraction": 0.01,
+    "range_offset_m": 0.1,
+    "range_noise_sd_m": 0.05,
+    "rf_noise_sd_db": 2,
+    "rf_threshold": 0.5,
+    "visual_range_m": 50,
+    "interior_position": [5, 5, 1.5]
+  },
+  "quorum_rules": ["single_preselected", "1_of_4", "2_of_4", "3_of_4", "4_of_4"],
+  "error_sweep": {
+    "false_positive": [0, 0.01, 0.05, 0.1, 0.2],
+    "false_negative": [0, 0.05, 0.1, 0.2, 0.4],
+    "error_common_fraction": [0, 0.25, 0.5, 0.75, 1]
+  },
+  "availability_sweep": {
+    "missing_probability": [0, 0.1, 0.25, 0.5],
+    "missing_common_fraction": [0, 1],
+    "error_common_fraction": [0, 0.5, 1],
+    "false_positive": 0.1,
+    "false_negative": 0.1
+  },
+  "dishonest_sweep": {
+    "dishonest_witnesses": [0, 1, 2],
+    "error_common_fraction": [0, 0.5, 1],
+    "false_positive": 0.1,
+    "false_negative": 0.1,
+    "behaviour": "The first f witnesses always report positive, including when the scene predicate is false or the patch is invisible. They cannot forge the geometric ranges."
+  },
+  "visibility_sweep": {
+    "positions_xy": [[0, 0], [5, 5], [20, 5], [24, 5], [25, 5], [30, 5], [0, 30], [0, 45], [35, 35]],
+    "horizontal_fov_degrees": [60, 120, 360],
+    "visual_range_m": [20, 50],
+    "heading": "Each witness faces the zone centre; the queried scene patch is at the prover's x,y and height zero.",
+    "false_positive": 0.1,
+    "false_negative": 0.1
+  },
+  "boundary_sweep": {
+    "path_y_m": 5,
+    "offsets_from_biased_third_witness_boundary_m": [-2, -1, -0.5, -0.25, -0.1, 0, 0.1, 0.25, 0.5, 1, 2],
+    "range_noise_sd_m": [0.05, 0.5, 1],
+    "recognition_error_probabilities": [0, 0.1],
+    "horizontal_fov_degrees": 360
+  },
+  "observation_model": {
+    "truth": "Whether a red car is present in the queried patch; absent cases use the same patch geometry.",
+    "common_errors": "For each independent trial, with probability c use one shared uniform draw for all witness errors; otherwise use separate uniform draws. Marginal error probabilities stay fixed. For equal error probabilities, raw pairwise error correlation equals c.",
+    "missing": "Use a separate, independent mixture for unavailable observations. Invisible or unavailable patches produce UNKNOWN, not a negative report.",
+    "geometry": "Visibility requires both 3-D range and horizontal field of view. Occlusion is represented by the declared missing-observation process, not a rendered scene.",
+    "pairing": "Reuse the same random input arrays across all conditions and rules. Select the single-witness index uniformly before any observation, independently for every trial.",
+    "time": "Independent static snapshot trials; no temporal-error process or network simulation."
+  },
+  "decision": {
+    "admit": "At least k positive contextual reports from witnesses passing range and RF.",
+    "inconclusive": "Admission is not reached, but unknown reports from otherwise eligible witnesses could change the result. This is a diagnostic category; deployment remains fail-closed.",
+    "reject": "Even making all unknown reports positive cannot reach k.",
+    "insufficient_observations": "Fewer than k witnesses in the rule have known contextual reports, independently of range/RF eligibility.",
+    "validity": "Truthful context at a stated position is not automatically within the service region. Boundary plots show admission of truthful claims, not a universal false-rejection rate."
+  },
+  "validation": [
+    "Common-offset RF formula agrees with the corrected simulator.",
+    "Replay sampled decisions through upstream policy and quorum code.",
+    "Conditional analytical binomial-mixture expectations for every contextual condition and rule.",
+    "Nested quorum decisions and no-context baselines.",
+    "Repeat execution with identical seed, inputs and outputs."
+  ],
+  "reporting": {
+    "intervals": "Pointwise 95% Wilson intervals for independent synthetic trials; not simultaneous intervals or uncertainty about real sensors.",
+    "baseline": "Range-only and range-plus-RF admission use the identical geometric/RF samples as contextual policies.",
+    "reference": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm",
+    "claims_excluded": ["Measured camera accuracy", "Empirical calibration of input error rates", "Physical relay resistance", "Image/asset authentication", "End-to-end field validation"]
+  }
+}

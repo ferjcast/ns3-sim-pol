@@ -1,0 +1,35 @@
+% Generated from verified results; compile with latexmk -cd -pdf.
+\documentclass[tikz,border=2pt]{standalone}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath,pgfplots}
+\usepgfplotslibrary{groupplots}
+% Same base palette as assets/figures/research-approach.tex.
+\definecolor{researchteal}{HTML}{009CA6}
+\definecolor{researchcyan}{HTML}{59DCE1}
+\definecolor{researchgrey}{HTML}{606575}
+\pgfplotsset{compat=1.18,every axis/.append style={width=123mm,height=78mm,
+    grid=major,major grid style={gray!15},
+    tick label style={font=\fontsize{9}{11}\selectfont},
+    label style={font=\fontsize{9}{11}\selectfont},
+    legend style={font=\fontsize{8}{10}\selectfont,draw=none,
+        at={(0.5,1.04)},anchor=south,legend cell align=left}}}
+\begin{document}\begin{tikzpicture}
+\begin{groupplot}[
+    group style={group size=2 by 1,horizontal sep=7mm},width=61mm,height=54mm,
+    xmin=-0.7,xmax=50.7,ymin=0,ymax=100,
+    xtick={0,10,25,50},ytick={0,25,50,75,100},legend columns=2,
+    title style={at={(0,1.02)},anchor=south west,font=\fontsize{9}{11}\selectfont\bfseries}]
+\nextgroupplot[title={(a) Admitted},ylabel={Valid-context trials (\%)},
+    legend style={at={(1.08,1.20)},anchor=south,font=\fontsize{8}{10}\selectfont,draw=none}]
+\addplot[color=researchteal,line width=1.0pt,solid,mark=*,mark size=2.1pt,mark options={solid,draw=researchteal,fill=researchteal},error bars/.cd,y dir=both,y explicit,error bar style={solid,line width=0.6pt}] table[col sep=comma,x=x,y=percent,y error minus=low,y error plus=high] {capture-sensitivity-data/availability-admit_rate-0.csv};
+\addlegendentry{Independent missingness}
+\addplot[color=researchgrey,line width=1.0pt,dashed,mark=square*,mark size=2.1pt,mark options={solid,draw=researchgrey,fill=researchgrey},error bars/.cd,y dir=both,y explicit,error bar style={solid,line width=0.6pt}] table[col sep=comma,x=x,y=percent,y error minus=low,y error plus=high] {capture-sensitivity-data/availability-admit_rate-1.csv};
+\addlegendentry{Shared missingness}
+\nextgroupplot[title={(b) Inconclusive},yticklabels={}]
+\addplot[color=researchteal,line width=1.0pt,solid,mark=*,mark size=2.1pt,mark options={solid,draw=researchteal,fill=researchteal},error bars/.cd,y dir=both,y explicit,error bar style={solid,line width=0.6pt}] table[col sep=comma,x=x,y=percent,y error minus=low,y error plus=high] {capture-sensitivity-data/availability-inconclusive-0.csv};
+\addplot[color=researchgrey,line width=1.0pt,dashed,mark=square*,mark size=2.1pt,mark options={solid,draw=researchgrey,fill=researchgrey},error bars/.cd,y dir=both,y explicit,error bar style={solid,line width=0.6pt}] table[col sep=comma,x=x,y=percent,y error minus=low,y error plus=high] {capture-sensitivity-data/availability-inconclusive-1.csv};
+\end{groupplot}
+\path (group c1r1.south west) -- node[midway,anchor=north,yshift=-6mm,
+    font=\fontsize{9}{11}\selectfont] {Missing observations per witness (\%)}
+    (group c2r1.south east);
+\end{tikzpicture}\end{document}

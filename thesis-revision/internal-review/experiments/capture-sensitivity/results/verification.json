@@ -1,0 +1,20 @@
+{
+  "exact_repeat_match": true,
+  "matching_files": [
+    "manifest.json",
+    "results.csv",
+    "checks.json",
+    "paired.json",
+    "batch-counts.json"
+  ],
+  "verified_output_sha256": {
+    "manifest.json": "a97c2f7ecb4a05d70d5d900167e2d830e2b2fcd68573610d347c435431b0d254",
+    "results.csv": "4bfb198bd9980c830657dc0b9d48f3cf2b6df4c45a9dabe74a5f4ab8a8ec0762",
+    "checks.json": "43642e2d0d3f1429150704a0c0bd9b79b16f14de22d8310495d0a569a9527cf3",
+    "paired.json": "38e0e3259615221c72abaa8e3c70b0fe6b911b6dcf6e34fb857c5e23a80c9e2b",
+    "batch-counts.json": "e1f01ab22dd54feb915351873bf058d62be2b4e33b52321bcb6269a9cc0732fd"
+  },
+  "protected_thesis_files_checked": 31,
+  "thesis_unchanged": true,
+  "guard_sha256": "48d95c57998546da6af1642651b2381671d7f7847eb54932fb72e6e7d65ff5aa"
+}

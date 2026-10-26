@@ -1,4 +1,8 @@
-# PoL Witnessing Zone - Python Simulation Results
+# Historical example: PoL Witnessing Zone Python Simulation Results
+
+> Retained historical notes. These are not the corrected, seeded Chapter 6
+> results. Configurations, performance comparisons, and conclusions below are
+> not validated by the thesis revision. See [the current artefact](thesis-revision/README.md).
 
 ## Overview
 

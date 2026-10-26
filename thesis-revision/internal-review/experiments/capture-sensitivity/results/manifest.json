@@ -1,0 +1,5518 @@
+{
+  "design": {
+    "version": "capture-sensitivity-v1",
+    "status": "Exploratory study, separate from the thesis and reviewer responses",
+    "seed": 2026102601,
+    "trials_per_condition": 100000,
+    "batches": 100,
+    "profile": {
+      "witnesses": 4,
+      "placement_radius_m": 20,
+      "witness_height_m": 3,
+      "prover_height_m": 1.5,
+      "range_limit_m": 40,
+      "range_bias_fraction": 0.01,
+      "range_offset_m": 0.1,
+      "range_noise_sd_m": 0.05,
+      "rf_noise_sd_db": 2,
+      "rf_threshold": 0.5,
+      "visual_range_m": 50,
+      "interior_position": [
+        5,
+        5,
+        1.5
+      ]
+    },
+    "quorum_rules": [
+      "single_preselected",
+      "1_of_4",
+      "2_of_4",
+      "3_of_4",
+      "4_of_4"
+    ],
+    "error_sweep": {
+      "false_positive": [
+        0,
+        0.01,
+        0.05,
+        0.1,
+        0.2
+      ],
+      "false_negative": [
+        0,
+        0.05,
+        0.1,
+        0.2,
+        0.4
+      ],
+      "error_common_fraction": [
+        0,
+        0.25,
+        0.5,
+        0.75,
+        1
+      ]
+    },
+    "availability_sweep": {
+      "missing_probability": [
+        0,
+        0.1,
+        0.25,
+        0.5
+      ],
+      "missing_common_fraction": [
+        0,
+        1
+      ],
+      "error_common_fraction": [
+        0,
+        0.5,
+        1
+      ],
+      "false_positive": 0.1,
+      "false_negative": 0.1
+    },
+    "dishonest_sweep": {
+      "dishonest_witnesses": [
+        0,
+        1,
+        2
+      ],
+      "error_common_fraction": [
+        0,
+        0.5,
+        1
+      ],
+      "false_positive": 0.1,
+      "false_negative": 0.1,
+      "behaviour": "The first f witnesses always report positive, including when the scene predicate is false or the patch is invisible. They cannot forge the geometric ranges."
+    },
+    "visibility_sweep": {
+      "positions_xy": [
+        [
+          0,
+          0
+        ],
+        [
+          5,
+          5
+        ],
+        [
+          20,
+          5
+        ],
+        [
+          24,
+          5
+        ],
+        [
+          25,
+          5
+        ],
+        [
+          30,
+          5
+        ],
+        [
+          0,
+          30
+        ],
+        [
+          0,
+          45
+        ],
+        [
+          35,
+          35
+        ]
+      ],
+      "horizontal_fov_degrees": [
+        60,
+        120,
+        360
+      ],
+      "visual_range_m": [
+        20,
+        50
+      ],
+      "heading": "Each witness faces the zone centre; the queried scene patch is at the prover's x,y and height zero.",
+      "false_positive": 0.1,
+      "false_negative": 0.1
+    },
+    "boundary_sweep": {
+      "path_y_m": 5,
+      "offsets_from_biased_third_witness_boundary_m": [
+        -2,
+        -1,
+        -0.5,
+        -0.25,
+        -0.1,
+        0,
+        0.1,
+        0.25,
+        0.5,
+        1,
+        2
+      ],
+      "range_noise_sd_m": [
+        0.05,
+        0.5,
+        1
+      ],
+      "recognition_error_probabilities": [
+        0,
+        0.1
+      ],
+      "horizontal_fov_degrees": 360
+    },
+    "observation_model": {
+      "truth": "Whether a red car is present in the queried patch; absent cases use the same patch geometry.",
+      "common_errors": "For each independent trial, with probability c use one shared uniform draw for all witness errors; otherwise use separate uniform draws. Marginal error probabilities stay fixed. For equal error probabilities, raw pairwise error correlation equals c.",
+      "missing": "Use a separate, independent mixture for unavailable observations. Invisible or unavailable patches produce UNKNOWN, not a negative report.",
+      "geometry": "Visibility requires both 3-D range and horizontal field of view. Occlusion is represented by the declared missing-observation process, not a rendered scene.",
+      "pairing": "Reuse the same random input arrays across all conditions and rules. Select the single-witness index uniformly before any observation, independently for every trial.",
+      "time": "Independent static snapshot trials; no temporal-error process or network simulation."
+    },
+    "decision": {
+      "admit": "At least k positive contextual reports from witnesses passing range and RF.",
+      "inconclusive": "Admission is not reached, but unknown reports from otherwise eligible witnesses could change the result. This is a diagnostic category; deployment remains fail-closed.",
+      "reject": "Even making all unknown reports positive cannot reach k.",
+      "insufficient_observations": "Fewer than k witnesses in the rule have known contextual reports, independently of range/RF eligibility.",
+      "validity": "Truthful context at a stated position is not automatically within the service region. Boundary plots show admission of truthful claims, not a universal false-rejection rate."
+    },
+    "validation": [
+      "Common-offset RF formula agrees with the corrected simulator.",
+      "Replay sampled decisions through upstream policy and quorum code.",
+      "Conditional analytical binomial-mixture expectations for every contextual condition and rule.",
+      "Nested quorum decisions and no-context baselines.",
+      "Repeat execution with identical seed, inputs and outputs."
+    ],
+    "reporting": {
+      "intervals": "Pointwise 95% Wilson intervals for independent synthetic trials; not simultaneous intervals or uncertainty about real sensors.",
+      "baseline": "Range-only and range-plus-RF admission use the identical geometric/RF samples as contextual policies.",
+      "reference": "https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm",
+      "claims_excluded": [
+        "Measured camera accuracy",
+        "Empirical calibration of input error rates",
+        "Physical relay resistance",
+        "Image/asset authentication",
+        "End-to-end field validation"
+      ]
+    }
+  },
+  "design_sha256": "c4fb37339ecb5a862707f5e5520bac56b3070cf28ac6e53b9d5721a0d5ef524b",
+  "driver_sha256": "e7c4a18a3d246e1ac3a2ea2263f9c08f99fc086de4198351b39f2d9ef9329330",
+  "loader_sha256": "b2c13789eeeda0dbb47a8983c2f22ad30577bcd99cc1ad92ce10213b52cc9869",
+  "python": "3.12.3",
+  "numpy": "2.5.2",
+  "trials_per_condition": 100000,
+  "scenario_count": 278,
+  "source_revision": "2a0c66a63e920ed3dbb1cfa3ebf476392da2f98b",
+  "random_generator": "NumPy default_rng / PCG64",
+  "input_sha256": {
+    "range_z": "b2cd8bb49937f83991890438e42879d8915f7846eb2a1f46efed4ce5d6d7157d",
+    "rf_prover_z": "a41cb2bbd598ed253f9cb6f19b7ba69823d484f1131bde1055302b2b7a5d4e2e",
+    "rf_expected_z": "ef78fc6b774810351ea16ebaa0fb35e0f06a4222f11670f99b5571ceb80913ab",
+    "error_local_u": "ce87b101f45cc238edfeaa67424ee2fd3523c235b18fa0bd737af5d979ebe557",
+    "error_shared_u": "a56b560cf0e3e7682b308eed12aa4b964d8a01221539890daec4063ad6092ee5",
+    "error_mode_u": "4bf6aa488cbe21237d3b217df67031a5dba453062302ae56aaeffee29fb42ce5",
+    "missing_local_u": "5585b2ed93ba61b9826168acefca0754f2e695e73d1125d6aa32983199f318a0",
+    "missing_shared_u": "86a5d9fb9d8cca5c304a68ce8add8b7c40e706c2af8bbc7566ec93ec8c377b49",
+    "missing_mode_u": "7fea2c7e6310818414363d6217be8fab9e2a8ea3abc8b7215dfd1ac1b240b8a9",
+    "single_index": "224e2ce87f13f4f2122a5ce6780c7454cee4ed5a1f49d34aa4ec87360dbb6b2e"
+  },
+  "third_witness_boundary_x_m": 24.261151603453413,
+  "scenarios": [
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-000"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-001"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-002"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-003"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-004"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.05,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-005"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.05,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-006"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.05,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-007"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.05,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-008"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.05,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-009"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-010"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.1,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-011"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-012"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.1,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-013"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-014"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.2,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-015"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.2,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-016"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.2,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-017"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.2,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-018"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.2,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-019"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.4,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-020"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.4,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-021"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.4,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-022"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.4,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-023"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0.4,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-024"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-025"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-026"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-027"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-028"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-029"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.05,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-030"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.05,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-031"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.05,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-032"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.05,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-033"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.05,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-034"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-035"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.1,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-036"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-037"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.1,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-038"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-039"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.2,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-040"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.2,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-041"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.2,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-042"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.2,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-043"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.2,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-044"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.4,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-045"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.4,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-046"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.4,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-047"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.4,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-048"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.01,
+      "fn": 0.4,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-049"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-050"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-051"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-052"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-053"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-054"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.05,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-055"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.05,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-056"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.05,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-057"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.05,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-058"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.05,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-059"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-060"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.1,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-061"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-062"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.1,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-063"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-064"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.2,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-065"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.2,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-066"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.2,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-067"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.2,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-068"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.2,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-069"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.4,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-070"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.4,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-071"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.4,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-072"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.4,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-073"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.05,
+      "fn": 0.4,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-074"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-075"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-076"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-077"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-078"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-079"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.05,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-080"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.05,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-081"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.05,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-082"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.05,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-083"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.05,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-084"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-085"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-086"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-087"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-088"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-089"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.2,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-090"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.2,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-091"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.2,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-092"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.2,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-093"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.2,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-094"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.4,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-095"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.4,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-096"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.4,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-097"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.4,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-098"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.4,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-099"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-100"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-101"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-102"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-103"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-104"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.05,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-105"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.05,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-106"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.05,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-107"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.05,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-108"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.05,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-109"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-110"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.1,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-111"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-112"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.1,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-113"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-114"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.2,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-115"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.2,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-116"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.2,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-117"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.2,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-118"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.2,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-119"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.4,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-120"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.4,
+      "error_common": 0.25,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-121"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.4,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-122"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.4,
+      "error_common": 0.75,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-123"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.2,
+      "fn": 0.4,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "errors",
+      "case_id": "errors-124"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-125"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-126"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-127"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-128"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-129"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-130"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.1,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-131"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.1,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-132"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.1,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-133"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.1,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-134"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.1,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-135"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.1,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-136"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.25,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-137"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.25,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-138"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.25,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-139"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.25,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-140"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.25,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-141"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.25,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-142"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.5,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-143"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.5,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-144"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.5,
+      "missing_common": 0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-145"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.5,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-146"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.5,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-147"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.5,
+      "missing_common": 1,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "availability",
+      "case_id": "availability-148"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-149"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-150"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-151"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 1,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-152"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 1,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-153"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 1,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-154"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 2,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-155"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.5,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 2,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-156"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 1,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 2,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "dishonest",
+      "case_id": "dishonest-157"
+    },
+    {
+      "position": [
+        0,
+        0,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-158"
+    },
+    {
+      "position": [
+        0,
+        0,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-159"
+    },
+    {
+      "position": [
+        0,
+        0,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-160"
+    },
+    {
+      "position": [
+        0,
+        0,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-161"
+    },
+    {
+      "position": [
+        0,
+        0,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-162"
+    },
+    {
+      "position": [
+        0,
+        0,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-163"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-164"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-165"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-166"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-167"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-168"
+    },
+    {
+      "position": [
+        5,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-169"
+    },
+    {
+      "position": [
+        20,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-170"
+    },
+    {
+      "position": [
+        20,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-171"
+    },
+    {
+      "position": [
+        20,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-172"
+    },
+    {
+      "position": [
+        20,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-173"
+    },
+    {
+      "position": [
+        20,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-174"
+    },
+    {
+      "position": [
+        20,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-175"
+    },
+    {
+      "position": [
+        24,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-176"
+    },
+    {
+      "position": [
+        24,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-177"
+    },
+    {
+      "position": [
+        24,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-178"
+    },
+    {
+      "position": [
+        24,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-179"
+    },
+    {
+      "position": [
+        24,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-180"
+    },
+    {
+      "position": [
+        24,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-181"
+    },
+    {
+      "position": [
+        25,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-182"
+    },
+    {
+      "position": [
+        25,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-183"
+    },
+    {
+      "position": [
+        25,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-184"
+    },
+    {
+      "position": [
+        25,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-185"
+    },
+    {
+      "position": [
+        25,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-186"
+    },
+    {
+      "position": [
+        25,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-187"
+    },
+    {
+      "position": [
+        30,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-188"
+    },
+    {
+      "position": [
+        30,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-189"
+    },
+    {
+      "position": [
+        30,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-190"
+    },
+    {
+      "position": [
+        30,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-191"
+    },
+    {
+      "position": [
+        30,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-192"
+    },
+    {
+      "position": [
+        30,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-193"
+    },
+    {
+      "position": [
+        0,
+        30,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-194"
+    },
+    {
+      "position": [
+        0,
+        30,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-195"
+    },
+    {
+      "position": [
+        0,
+        30,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-196"
+    },
+    {
+      "position": [
+        0,
+        30,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-197"
+    },
+    {
+      "position": [
+        0,
+        30,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-198"
+    },
+    {
+      "position": [
+        0,
+        30,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-199"
+    },
+    {
+      "position": [
+        0,
+        45,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-200"
+    },
+    {
+      "position": [
+        0,
+        45,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-201"
+    },
+    {
+      "position": [
+        0,
+        45,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-202"
+    },
+    {
+      "position": [
+        0,
+        45,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-203"
+    },
+    {
+      "position": [
+        0,
+        45,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-204"
+    },
+    {
+      "position": [
+        0,
+        45,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-205"
+    },
+    {
+      "position": [
+        35,
+        35,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-206"
+    },
+    {
+      "position": [
+        35,
+        35,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 60,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-207"
+    },
+    {
+      "position": [
+        35,
+        35,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-208"
+    },
+    {
+      "position": [
+        35,
+        35,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 120,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-209"
+    },
+    {
+      "position": [
+        35,
+        35,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 20,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-210"
+    },
+    {
+      "position": [
+        35,
+        35,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360,
+      "visual_range": 50,
+      "boundary_offset": null,
+      "block": "visibility",
+      "case_id": "visibility-211"
+    },
+    {
+      "position": [
+        22.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -2,
+      "block": "boundary",
+      "case_id": "boundary-212"
+    },
+    {
+      "position": [
+        22.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -2,
+      "block": "boundary",
+      "case_id": "boundary-213"
+    },
+    {
+      "position": [
+        22.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -2,
+      "block": "boundary",
+      "case_id": "boundary-214"
+    },
+    {
+      "position": [
+        22.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -2,
+      "block": "boundary",
+      "case_id": "boundary-215"
+    },
+    {
+      "position": [
+        22.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -2,
+      "block": "boundary",
+      "case_id": "boundary-216"
+    },
+    {
+      "position": [
+        22.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -2,
+      "block": "boundary",
+      "case_id": "boundary-217"
+    },
+    {
+      "position": [
+        23.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -1,
+      "block": "boundary",
+      "case_id": "boundary-218"
+    },
+    {
+      "position": [
+        23.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -1,
+      "block": "boundary",
+      "case_id": "boundary-219"
+    },
+    {
+      "position": [
+        23.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -1,
+      "block": "boundary",
+      "case_id": "boundary-220"
+    },
+    {
+      "position": [
+        23.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -1,
+      "block": "boundary",
+      "case_id": "boundary-221"
+    },
+    {
+      "position": [
+        23.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -1,
+      "block": "boundary",
+      "case_id": "boundary-222"
+    },
+    {
+      "position": [
+        23.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -1,
+      "block": "boundary",
+      "case_id": "boundary-223"
+    },
+    {
+      "position": [
+        23.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.5,
+      "block": "boundary",
+      "case_id": "boundary-224"
+    },
+    {
+      "position": [
+        23.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.5,
+      "block": "boundary",
+      "case_id": "boundary-225"
+    },
+    {
+      "position": [
+        23.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.5,
+      "block": "boundary",
+      "case_id": "boundary-226"
+    },
+    {
+      "position": [
+        23.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.5,
+      "block": "boundary",
+      "case_id": "boundary-227"
+    },
+    {
+      "position": [
+        23.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.5,
+      "block": "boundary",
+      "case_id": "boundary-228"
+    },
+    {
+      "position": [
+        23.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.5,
+      "block": "boundary",
+      "case_id": "boundary-229"
+    },
+    {
+      "position": [
+        24.011151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.25,
+      "block": "boundary",
+      "case_id": "boundary-230"
+    },
+    {
+      "position": [
+        24.011151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.25,
+      "block": "boundary",
+      "case_id": "boundary-231"
+    },
+    {
+      "position": [
+        24.011151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.25,
+      "block": "boundary",
+      "case_id": "boundary-232"
+    },
+    {
+      "position": [
+        24.011151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.25,
+      "block": "boundary",
+      "case_id": "boundary-233"
+    },
+    {
+      "position": [
+        24.011151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.25,
+      "block": "boundary",
+      "case_id": "boundary-234"
+    },
+    {
+      "position": [
+        24.011151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.25,
+      "block": "boundary",
+      "case_id": "boundary-235"
+    },
+    {
+      "position": [
+        24.161151603453412,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.1,
+      "block": "boundary",
+      "case_id": "boundary-236"
+    },
+    {
+      "position": [
+        24.161151603453412,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.1,
+      "block": "boundary",
+      "case_id": "boundary-237"
+    },
+    {
+      "position": [
+        24.161151603453412,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.1,
+      "block": "boundary",
+      "case_id": "boundary-238"
+    },
+    {
+      "position": [
+        24.161151603453412,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.1,
+      "block": "boundary",
+      "case_id": "boundary-239"
+    },
+    {
+      "position": [
+        24.161151603453412,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.1,
+      "block": "boundary",
+      "case_id": "boundary-240"
+    },
+    {
+      "position": [
+        24.161151603453412,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": -0.1,
+      "block": "boundary",
+      "case_id": "boundary-241"
+    },
+    {
+      "position": [
+        24.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0,
+      "block": "boundary",
+      "case_id": "boundary-242"
+    },
+    {
+      "position": [
+        24.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0,
+      "block": "boundary",
+      "case_id": "boundary-243"
+    },
+    {
+      "position": [
+        24.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0,
+      "block": "boundary",
+      "case_id": "boundary-244"
+    },
+    {
+      "position": [
+        24.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0,
+      "block": "boundary",
+      "case_id": "boundary-245"
+    },
+    {
+      "position": [
+        24.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0,
+      "block": "boundary",
+      "case_id": "boundary-246"
+    },
+    {
+      "position": [
+        24.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0,
+      "block": "boundary",
+      "case_id": "boundary-247"
+    },
+    {
+      "position": [
+        24.361151603453415,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.1,
+      "block": "boundary",
+      "case_id": "boundary-248"
+    },
+    {
+      "position": [
+        24.361151603453415,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.1,
+      "block": "boundary",
+      "case_id": "boundary-249"
+    },
+    {
+      "position": [
+        24.361151603453415,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.1,
+      "block": "boundary",
+      "case_id": "boundary-250"
+    },
+    {
+      "position": [
+        24.361151603453415,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.1,
+      "block": "boundary",
+      "case_id": "boundary-251"
+    },
+    {
+      "position": [
+        24.361151603453415,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.1,
+      "block": "boundary",
+      "case_id": "boundary-252"
+    },
+    {
+      "position": [
+        24.361151603453415,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.1,
+      "block": "boundary",
+      "case_id": "boundary-253"
+    },
+    {
+      "position": [
+        24.511151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.25,
+      "block": "boundary",
+      "case_id": "boundary-254"
+    },
+    {
+      "position": [
+        24.511151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.25,
+      "block": "boundary",
+      "case_id": "boundary-255"
+    },
+    {
+      "position": [
+        24.511151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.25,
+      "block": "boundary",
+      "case_id": "boundary-256"
+    },
+    {
+      "position": [
+        24.511151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.25,
+      "block": "boundary",
+      "case_id": "boundary-257"
+    },
+    {
+      "position": [
+        24.511151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.25,
+      "block": "boundary",
+      "case_id": "boundary-258"
+    },
+    {
+      "position": [
+        24.511151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.25,
+      "block": "boundary",
+      "case_id": "boundary-259"
+    },
+    {
+      "position": [
+        24.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.5,
+      "block": "boundary",
+      "case_id": "boundary-260"
+    },
+    {
+      "position": [
+        24.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.5,
+      "block": "boundary",
+      "case_id": "boundary-261"
+    },
+    {
+      "position": [
+        24.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.5,
+      "block": "boundary",
+      "case_id": "boundary-262"
+    },
+    {
+      "position": [
+        24.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.5,
+      "block": "boundary",
+      "case_id": "boundary-263"
+    },
+    {
+      "position": [
+        24.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.5,
+      "block": "boundary",
+      "case_id": "boundary-264"
+    },
+    {
+      "position": [
+        24.761151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 0.5,
+      "block": "boundary",
+      "case_id": "boundary-265"
+    },
+    {
+      "position": [
+        25.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 1,
+      "block": "boundary",
+      "case_id": "boundary-266"
+    },
+    {
+      "position": [
+        25.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 1,
+      "block": "boundary",
+      "case_id": "boundary-267"
+    },
+    {
+      "position": [
+        25.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 1,
+      "block": "boundary",
+      "case_id": "boundary-268"
+    },
+    {
+      "position": [
+        25.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 1,
+      "block": "boundary",
+      "case_id": "boundary-269"
+    },
+    {
+      "position": [
+        25.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 1,
+      "block": "boundary",
+      "case_id": "boundary-270"
+    },
+    {
+      "position": [
+        25.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 1,
+      "block": "boundary",
+      "case_id": "boundary-271"
+    },
+    {
+      "position": [
+        26.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 2,
+      "block": "boundary",
+      "case_id": "boundary-272"
+    },
+    {
+      "position": [
+        26.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.05,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 2,
+      "block": "boundary",
+      "case_id": "boundary-273"
+    },
+    {
+      "position": [
+        26.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 2,
+      "block": "boundary",
+      "case_id": "boundary-274"
+    },
+    {
+      "position": [
+        26.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 0.5,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 2,
+      "block": "boundary",
+      "case_id": "boundary-275"
+    },
+    {
+      "position": [
+        26.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0,
+      "fn": 0,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 2,
+      "block": "boundary",
+      "case_id": "boundary-276"
+    },
+    {
+      "position": [
+        26.261151603453413,
+        5,
+        1.5
+      ],
+      "range_sd": 1,
+      "fp": 0.1,
+      "fn": 0.1,
+      "error_common": 0.0,
+      "missing": 0.0,
+      "missing_common": 0.0,
+      "dishonest": 0,
+      "fov": 360.0,
+      "visual_range": 50,
+      "boundary_offset": 2,
+      "block": "boundary",
+      "case_id": "boundary-277"
+    }
+  ],
+  "simpy": "4.1.1",
+  "correction": {
+    "applied": true,
+    "version": "rf-shared-offset-v1",
+    "patch": "capture-rf-normalization.patch",
+    "patch_sha256": "ae5f87aafe7371600e536fec4ab04a2265fb7c8ff34fa38c33d30d3efc7e1e94",
+    "description": "Compute one offset from both original RSSI vectors before shifting either.",
+    "loaded_simulator_sha256": "fba14a1651bca14b5f15ea3f60d1fed4c4121bb98f048077704e7c05f1ecf641"
+  }
+}

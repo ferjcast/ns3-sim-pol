@@ -1,0 +1,104 @@
+{
+  "purpose": "Analytical ranging-only replacement for Figure 22; no RF or visual gates.",
+  "model": {
+    "placement_radius_m": 12,
+    "witnesses": [
+      [
+        -8.48528137423857,
+        -8.48528137423857,
+        3.0
+      ],
+      [
+        8.48528137423857,
+        -8.48528137423857,
+        3.0
+      ],
+      [
+        8.48528137423857,
+        8.48528137423857,
+        3.0
+      ],
+      [
+        -8.48528137423857,
+        8.48528137423857,
+        3.0
+      ]
+    ],
+    "prover_height_m": 1.5,
+    "quorum": 3,
+    "range_limit_m": 20,
+    "range_mean": "1.01*d + 0.10 metres",
+    "range_sd_m": 0.05
+  },
+  "grid": {
+    "points_per_axis": 1201,
+    "extent_m": [
+      -15,
+      15
+    ],
+    "step_m": 0.025000000000000355
+  },
+  "edge_detail": {
+    "x_extent_m": [
+      9.0,
+      9.6
+    ],
+    "y_extent_m": [
+      -0.22,
+      0.22
+    ],
+    "grid_shape": [
+      301,
+      401
+    ],
+    "layout": "Separate smaller side panel outside the overview; no map overlay.",
+    "overview_outline": "50% contour with a contrasting white halo",
+    "detail_contours": [
+      "10%",
+      "50%",
+      "90%"
+    ]
+  },
+  "checks": {
+    "source_and_independent_enumeration_points": 107,
+    "bounded_finite_grid": true,
+    "diagonal_and_central_symmetry": true,
+    "bounded_symmetric_edge_detail": true
+  },
+  "point_probabilities": {
+    "(0,0)": 1.0,
+    "(5,5)": 1.0,
+    "(9.28,0)": 0.358941490768985,
+    "(13,13)": 0.0,
+    "(15,15)": 0.0,
+    "(18,0)": 0.0,
+    "(30,30)": 0.0
+  },
+  "contours": [
+    {
+      "probability": 0.1,
+      "label": "10%"
+    },
+    {
+      "probability": 0.5,
+      "label": "50%"
+    },
+    {
+      "probability": 0.9,
+      "label": "90%"
+    }
+  ],
+  "fraud_annotation": "None; fraud scenarios are described in the text.",
+  "palette": {
+    "teal": "#009CA6",
+    "cyan": "#59DCE1",
+    "slate": "#606575"
+  },
+  "source_model_sha256": "0a8a680539aff92c0850ec8356c09de4b82b4924e08608cf73a9e4e8d603564e",
+  "script_sha256": "4e34da2c51c17bae5c71514b1a7994adc0ea5cb1418390e3c15d342b65346363",
+  "grid_sha256": "d37e83bcbf47acc2952a017e706439b84a9d71c57f264fc4e9dd7d4a8a88f350",
+  "figure_sha256": "73ca31b76acb75158d2ef4ea1bd20b15361cded92ffbc11e2857585428b26b7f",
+  "python": "3.12.3",
+  "numpy": "2.5.2",
+  "matplotlib": "3.11.2"
+}

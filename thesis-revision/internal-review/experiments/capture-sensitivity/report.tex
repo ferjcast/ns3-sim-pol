@@ -1,0 +1,213 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage[T1]{fontenc}
+\usepackage{newtxtext,newtxmath}
+\usepackage{booktabs,pgfplots,hyperref,xurl}
+\definecolor{researchteal}{HTML}{009CA6}
+\definecolor{researchcyan}{HTML}{59DCE1}
+\definecolor{researchgrey}{HTML}{606575}
+\pgfplotsset{compat=1.18,every axis/.append style={width=.93\linewidth,height=6.1cm,
+  grid=major,major grid style={gray!15},tick label style={font=\small},label style={font=\small},
+  legend style={font=\scriptsize,draw=none,at={(0.5,1.04)},anchor=south,legend columns=3}}}
+\hypersetup{colorlinks=true,urlcolor=teal!70!black}
+\setlength{\parindent}{0pt}\setlength{\parskip}{5pt}
+\title{Capture-admission sensitivity study}
+\author{Controlled sensitivity analysis and reproduction checks}
+\date{26 October 2026}
+\begin{document}\maketitle
+\textbf{Status.} Selected results are included in thesis Section 6.4.4; this report retains the complete study.
+
+\section*{Question and design}
+When does a quorum improve contextual admission, and when does that advantage disappear?
+The frozen grid has 278 parameter conditions, each evaluated with 100,000 independent synthetic
+snapshot trials for object-present and object-absent context. The same latent random inputs are
+reused across rules and conditions for paired comparison; they are not 55.6 million independent scenes.
+
+The four witnesses retain the supplied visual profile: placement radius 20 m, range limit 40 m,
+height 3 m, and prover height 1.5 m. Range and RF observations use the inspected source equations
+and retained RF correction. Sensor errors and missing observations are declared hypothetical
+inputs. There is no camera, image recognition, measured error calibration, rendered occlusion,
+physical relay attack, temporal process, or network evaluation.
+
+The single-witness reference selects one witness uniformly before each trial's observations.
+``Any one of four'' means a positive report from any eligible witness, a different and more
+permissive rule. Every rule sees the same range, RF and contextual samples.
+
+\section*{Reference result: independent 10\% errors}
+Each witness has false-positive and missed-detection probabilities 0.1, with no missing
+observations or dishonest witnesses. Entries are admission percentages with pointwise 95\% Wilson
+intervals. The latter quantify Monte Carlo uncertainty within this model, not uncertainty about real sensors.
+\begin{center}\small\begin{tabular}{lrr}\toprule
+Rule & Valid context (\%) & Invalid context (\%)\\\midrule
+One preselected & 89.89 [89.70, 90.07] & 10.112 [9.927, 10.300] \\
+Any one of four & 99.99 [99.98, 99.99] & 34.723 [34.429, 35.019] \\
+2 of 4 & 99.62 [99.58, 99.66] & 5.333 [5.195, 5.474] \\
+3 of 4 & 94.67 [94.53, 94.80] & 0.380 [0.344, 0.420] \\
+4 of 4 & 65.27 [64.97, 65.56] & 0.010 [0.005, 0.018] \\
+\bottomrule\end{tabular}\end{center}
+The range-plus-RF baseline admits 100.00\% of the invalid-context trials:
+proximity and RF do not evaluate whether the object is present. The 3-of-4 contextual policy admits
+94.67\% of valid-context trials and 0.38\% of invalid-context trials.
+These are conditional model results, not measured recognition or authentication performance.
+
+From the thesis root, with NumPy 2.5.2, SimPy 4.1.1, Python 3.12 and an authorised source checkout:
+\begin{quote}\footnotesize\begin{verbatim}
+PYTHONHASHSEED=0 python3 \
+ internal-review/experiments/capture-sensitivity/run-study.py \
+ --source /path/to/ns3-sim-pol --output /tmp/sensitivity
+\end{verbatim}\end{quote}
+
+\clearpage\section*{Shared recognition errors}
+With probability $c$, all witnesses use one shared recognition-error draw; otherwise each uses
+an independent draw. Marginal error probabilities stay at 0.1. For homogeneous witnesses the raw
+pairwise error correlation is $c$; range and RF gating can introduce other decision dependencies.
+Other joint error distributions with the same pairwise correlation can produce different quorum rates.
+\begin{center}\begin{tikzpicture}
+\begin{axis}[xlabel={Shared recognition-error fraction $c$},xmin=0,xmax=1,ylabel={Invalid-context admission (\%)},ymode=log,ymin=0.003,ymax=60,ytick={0.01,0.1,1,10},yticklabels={0.01,0.1,1,10}]
+\addplot[color=researchgrey,thick,mark=o,mark size=1.8pt,mark options={solid,draw=researchgrey,fill=white},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-False-single_preselected.csv};
+\addlegendentry{One preselected}
+\addplot[color=researchcyan!70!black,thick,mark=triangle*,mark size=1.8pt,mark options={solid,draw=researchcyan!70!black,fill=researchcyan!70!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-False-1_of_4.csv};
+\addlegendentry{Any one of four}
+\addplot[color=researchgrey!65!black,thick,mark=diamond*,mark size=1.8pt,mark options={solid,draw=researchgrey!65!black,fill=researchgrey!65!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-False-2_of_4.csv};
+\addlegendentry{2 of 4}
+\addplot[color=researchteal,thick,mark=*,mark size=1.8pt,mark options={solid,draw=researchteal,fill=researchteal},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-False-3_of_4.csv};
+\addlegendentry{3 of 4}
+\addplot[color=researchteal!55!black,thick,mark=square*,mark size=1.8pt,mark options={solid,draw=researchteal!55!black,fill=researchteal!55!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-False-4_of_4.csv};
+\addlegendentry{4 of 4}
+\end{axis}\end{tikzpicture}\end{center}
+\begin{center}\begin{tikzpicture}
+\begin{axis}[xlabel={Shared recognition-error fraction $c$},xmin=0,xmax=1,ylabel={Valid-context admission (\%)},ymin=60,ymax=101]
+\addplot[color=researchgrey,thick,mark=o,mark size=1.8pt,mark options={solid,draw=researchgrey,fill=white},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-True-single_preselected.csv};
+\addlegendentry{One preselected}
+\addplot[color=researchcyan!70!black,thick,mark=triangle*,mark size=1.8pt,mark options={solid,draw=researchcyan!70!black,fill=researchcyan!70!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-True-1_of_4.csv};
+\addlegendentry{Any one of four}
+\addplot[color=researchgrey!65!black,thick,mark=diamond*,mark size=1.8pt,mark options={solid,draw=researchgrey!65!black,fill=researchgrey!65!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-True-2_of_4.csv};
+\addlegendentry{2 of 4}
+\addplot[color=researchteal,thick,mark=*,mark size=1.8pt,mark options={solid,draw=researchteal,fill=researchteal},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-True-3_of_4.csv};
+\addlegendentry{3 of 4}
+\addplot[color=researchteal!55!black,thick,mark=square*,mark size=1.8pt,mark options={solid,draw=researchteal!55!black,fill=researchteal!55!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/correlation-True-4_of_4.csv};
+\addlegendentry{4 of 4}
+\end{axis}\end{tikzpicture}\end{center}
+For 3-of-4, invalid-context admission rises from 0.38\% to
+10.02\% as errors become fully shared. At full sharing, several observations
+contain essentially one recognition decision. Correlation does not worsen every rule in every
+direction: it reduces the false-positive union for ``any one'', and reduces the chance of at least
+one missed detection for ``all four''. The full results retain these effects.
+
+\clearpage\section*{Unavailable observations and dishonest reports}
+An invisible or missing patch produces UNKNOWN. Admission remains fail-closed. We additionally
+label a trial inconclusive when unknown reports from otherwise eligible witnesses could change
+the decision; a definitive rejection cannot be rescued by those unknown reports.
+
+The following 3-of-4 curves keep recognition errors independent at 0.1 and vary only the missing
+observation process. With shared missingness, the entire observation set is missing together;
+independent missingness can instead fragment the set. Equal marginal availability therefore
+does not imply equal quorum availability.
+\begin{center}\begin{tikzpicture}
+\begin{axis}[xlabel={Missing observations per witness (\%)},xmin=0,xmax=50,ymin=0,ymax=100,ylabel={Valid-context admission (\%)}]
+\addplot[color=researchteal,thick,mark=o,mark size=1.8pt,mark options={solid,draw=researchteal,fill=white},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/availability-admit_rate-0.csv};
+\addlegendentry{Independent missingness}
+\addplot[color=researchgrey,thick,mark=triangle*,mark size=1.8pt,mark options={solid,draw=researchgrey,fill=researchgrey},dashed,error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/availability-admit_rate-1.csv};
+\addlegendentry{Shared missingness}
+\end{axis}\end{tikzpicture}\end{center}
+\begin{center}\begin{tikzpicture}
+\begin{axis}[xlabel={Missing observations per witness (\%)},xmin=0,xmax=50,ymin=0,ymax=100,ylabel={Inconclusive (\%)}]
+\addplot[color=researchteal,thick,mark=o,mark size=1.8pt,mark options={solid,draw=researchteal,fill=white}] table[col sep=comma,x=x,y=rate] {plot-data/availability-inconclusive-0.csv};
+\addlegendentry{Independent missingness}
+\addplot[color=researchgrey,thick,mark=triangle*,mark size=1.8pt,mark options={solid,draw=researchgrey,fill=researchgrey},dashed] table[col sep=comma,x=x,y=rate] {plot-data/availability-inconclusive-1.csv};
+\addlegendentry{Shared missingness}
+\end{axis}\end{tikzpicture}\end{center}
+\textbf{Dishonest witnesses.} The first $f$ witnesses always report positive. Ranges remain
+unforgeable within this model. The table gives invalid-context admission (\%) for 3-of-4.
+\begin{center}\small\begin{tabular}{rrrr}\toprule
+$f$ & Independent errors & Half shared & Fully shared\\\midrule
+0 & 0.38 & 5.23 & 10.02 \\
+1 & 2.81 & 6.48 & 10.02 \\
+2 & 19.31 & 14.69 & 10.02 \\
+\bottomrule\end{tabular}\end{center}
+With two dishonest positives, one further false positive suffices. Independence then creates
+two opportunities for that error, explaining why shared errors can lower admission in this
+particular compromised configuration. This is not a Byzantine-security proof.
+
+\clearpage\section*{Coverage boundary and range uncertainty}
+The path is $y=5$ m. Zero on the horizontal axis is where the third witness's mean biased range
+equals 40 m: $x=24.2612$ m. The lower panel adds independent
+0.1 recognition error; the upper panel isolates ranging with perfect contextual observations.
+The unbiased geometric 40 m contour lies a further 0.509 m along this path.
+\begin{center}\begin{tikzpicture}
+\begin{axis}[xlabel={Position relative to biased third-witness boundary (m)},ylabel={Truthful-context admission (\%)},xmin=-2,xmax=2,ymin=0,ymax=101,title={Recognition error probability 0}]
+\addplot[color=researchgrey,thick,mark=o,mark size=1.8pt,mark options={solid,draw=researchgrey,fill=white},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/boundary-0-0.05.csv};
+\addlegendentry{Range SD 0.05 m}
+\addplot[color=researchteal,thick,mark=triangle*,mark size=1.8pt,mark options={solid,draw=researchteal,fill=researchteal},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/boundary-0-0.5.csv};
+\addlegendentry{Range SD 0.5 m}
+\addplot[color=researchcyan!70!black,thick,mark=diamond*,mark size=1.8pt,mark options={solid,draw=researchcyan!70!black,fill=researchcyan!70!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/boundary-0-1.csv};
+\addlegendentry{Range SD 1 m}
+\end{axis}\end{tikzpicture}\end{center}
+\begin{center}\begin{tikzpicture}
+\begin{axis}[xlabel={Position relative to biased third-witness boundary (m)},ylabel={Truthful-context admission (\%)},xmin=-2,xmax=2,ymin=0,ymax=101,title={Recognition error probability 0.1}]
+\addplot[color=researchgrey,thick,mark=o,mark size=1.8pt,mark options={solid,draw=researchgrey,fill=white},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/boundary-0.1-0.05.csv};
+\addlegendentry{Range SD 0.05 m}
+\addplot[color=researchteal,thick,mark=triangle*,mark size=1.8pt,mark options={solid,draw=researchteal,fill=researchteal},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/boundary-0.1-0.5.csv};
+\addlegendentry{Range SD 0.5 m}
+\addplot[color=researchcyan!70!black,thick,mark=diamond*,mark size=1.8pt,mark options={solid,draw=researchcyan!70!black,fill=researchcyan!70!black},error bars/.cd,y dir=both,y explicit] table[col sep=comma,x=x,y=rate,y error minus=low,y error plus=high] {plot-data/boundary-0.1-1.csv};
+\addlegendentry{Range SD 1 m}
+\end{axis}\end{tikzpicture}\end{center}
+These curves describe admission of truthful contextual claims at those positions. Outside the
+configured service region, non-admission is expected and is not automatically a false rejection.
+Range uncertainty softens the boundary in both directions. Near a three-witness contour,
+there may be only three useful observers, so even independent missed detections reduce
+availability more than at the four-observer interior point.
+
+\clearpage\section*{Viewpoint and observability}
+Each witness points toward the zone centre. Visibility requires the queried ground-level patch
+to lie within both its 3-D visual range and horizontal field of view. This is geometry, not an
+image-rendering model. The table gives the number of visible witnesses for every specified patch.
+\begin{center}\small\begin{tabular}{lrrrrrr}\toprule
+ & \multicolumn{3}{c}{Visual range 20 m} & \multicolumn{3}{c}{Visual range 50 m}\\
+Patch $(x,y)$ m & $60^\circ$ & $120^\circ$ & $360^\circ$ & $60^\circ$ & $120^\circ$ & $360^\circ$\\\midrule
+(0, 0) & 0 & 0 & 0 & 4 & 4 & 4 \\
+(5, 5) & 1 & 1 & 1 & 4 & 4 & 4 \\
+(20, 5) & 0 & 0 & 1 & 1 & 2 & 4 \\
+(24, 5) & 0 & 0 & 1 & 1 & 2 & 4 \\
+(25, 5) & 0 & 0 & 1 & 1 & 2 & 4 \\
+(30, 5) & 0 & 0 & 1 & 1 & 2 & 4 \\
+(0, 30) & 0 & 0 & 0 & 2 & 2 & 4 \\
+(0, 45) & 0 & 0 & 0 & 0 & 0 & 2 \\
+(35, 35) & 0 & 0 & 0 & 0 & 0 & 1 \\
+\bottomrule\end{tabular}\end{center}
+The zero entries at the centre with a 20 m visual range follow from 3-D distance:
+ground-to-witness separation is $\sqrt{20^2+3^2}>20$ m. They are a declared threshold effect,
+not evidence of a defective camera. At patch $(20,5)$ with a $120^\circ$ field of view and 50 m
+visual range, only 2 witnesses see the patch. The 3-of-4 valid-context
+admission is 0.00\%. Witness placement and orientation therefore require
+coverage planning beyond the radio-proximity condition.
+
+\section*{What the experiment establishes}
+The policy exhibits quantifiable trade-offs between invalid-context admission, valid-context
+admission, and observability under stated assumptions. Independent observations can help a quorum;
+shared errors, missing viewpoints, and dishonest reports can remove that benefit. Increasing
+the threshold can suppress invalid admission while reducing availability. These are conditional
+sensitivity findings with explicit failure conditions.
+
+The visual predicate only asks whether a red car is present in a patch. It never inspects a
+submitted asset. This study cannot establish that a photograph depicts the observed object or
+was captured there; asset binding and physical sensing remain separate validation obligations.
+
+\section*{Checks and reproducibility}
+All 2780 conditional analytical checks passed. The maximum deviation from the
+conditional analytical expectation was 3.54 Monte Carlo standard errors, within the predefined
+diagnostic tolerance of seven. This is an implementation check, not a goodness-of-fit test for
+real sensors. All 5760 sampled source-policy/quorum replays and
+1668 nested-quorum checks passed. The corrected RF score passed its regression checks.
+
+The complete grid, every result row, paired contrasts, and 100 batch counts per row are retained
+in \path{results/}. The design is \path{design.json}; the manifest records source, correction,
+driver, design, random-input hashes and dependency versions. Pointwise intervals follow the
+\href{https://www.itl.nist.gov/div898/handbook/prc/section2/prc241.htm}{NIST Wilson-interval description}.
+The inputs are independent synthetic snapshots, with no inferred real-world confidence bound.
+A second execution reproduced all five raw output files byte for byte. Before integration,
+hash checks confirmed that all 31 protected thesis and response files, including both PDFs,
+were unchanged. That pre-integration record is retained as historical provenance.
+The scripts \path{verify-study.py} and \path{make-report.py} check the repeat and generate this report.
+
+\end{document}

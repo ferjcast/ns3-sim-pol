@@ -1,0 +1,10 @@
+{
+  "analytical_checks": 2780,
+  "source_replay_decisions": 5760,
+  "monotone_checks": 1668,
+  "rf_regression": {
+    "shared_offset_and_symmetry_pairs": 101,
+    "edge_cases": 3,
+    "passed": true
+  }
+}

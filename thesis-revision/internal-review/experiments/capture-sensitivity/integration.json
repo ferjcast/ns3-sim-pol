@@ -1,0 +1,63 @@
+{
+  "integration_authorized": true,
+  "status": "included_in_thesis",
+  "date": "2026-10-26",
+  "section_label": "sec:capture-sensitivity",
+  "table_label": "tab:capture-sensitivity-reference",
+  "figure_labels": [
+    "fig:capture-sensitivity-correlation",
+    "fig:capture-sensitivity-availability"
+  ],
+  "historical_guard": "thesis-guard.json",
+  "raw_results_unchanged": true,
+  "section_number": "6.4.4",
+  "section_pages": [
+    116,
+    119
+  ],
+  "table_number": 12,
+  "figure_numbers": [
+    23,
+    24
+  ],
+  "appendix_section": "A.3",
+  "compiled_artifacts": {
+    "main.pdf": {
+      "pages": 188,
+      "sha256": "3f408d4cf38389d57d6e3faf4b3bde1ee51dbc3381f50a11e531d4c35dc1bffb",
+      "no_overflows_or_undefined_references": true
+    },
+    "internal-review/response/main.pdf": {
+      "pages": 21,
+      "sha256": "a657d6b5b4d23acfd1589008857f33f3fe85e8ca8b15223e26ff0d4c6f5e5243",
+      "no_overflows_or_undefined_references": true
+    },
+    "internal-review/experiments/capture-sensitivity/report.pdf": {
+      "pages": 5,
+      "sha256": "10d938360f627c27aa33e2abd371aa368ced6da8733827b096adc5ecb4915729",
+      "no_overflows_or_undefined_references": true
+    }
+  },
+  "plot_presentation": {
+    "palette": "009CA6 / 59DCE1 / 606575 and darker shades",
+    "percentage_axes": true,
+    "distinct_markers_and_lines": true,
+    "availability_panels": [
+      "Admitted",
+      "Inconclusive"
+    ],
+    "grayscale_checked": true,
+    "availability_panel_layout": "side_by_side",
+    "availability_height_reduction_percent": 44.8,
+    "proximity_boundary": "Bold 50% outline with a smaller edge-detail panel outside the overview; nothing overlays the map."
+  },
+  "capture_profile_revision": {
+    "session_only_linkage_not_sufficient_for_acquisition": true,
+    "required_feature_to_asset_verification": true,
+    "explicit_failure_rejection": true,
+    "simulation_scope": "Admission decisions only; acquisition path and asset-feature binding are requirements, not experimentally validated components.",
+    "algorithm_page": 107,
+    "heatmap_figure": 22,
+    "heatmap_page": 115
+  }
+}

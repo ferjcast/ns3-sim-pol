@@ -1,0 +1,25 @@
+{
+  "results_sha256": "4bfb198bd9980c830657dc0b9d48f3cf2b6df4c45a9dabe74a5f4ab8a8ec0762",
+  "plot_data_units": "Percent on y axes and on the availability x axis; interval errors in percentage points.",
+  "palette": {
+    "teal": "009CA6",
+    "cyan": "59DCE1",
+    "grey": "606575",
+    "source": "assets/figures/research-approach.tex"
+  },
+  "exporter_sha256": "7b1a1d6940fd5fdd9776892008a4f0cbd292f8b9d6f8a4c0b47ecb85623aa54a",
+  "exported": {
+    "assets/tables/capture-sensitivity-reference.tex": "296ac7b29580d3d38895de6c48736863b90bce10e63e5c80bfd0f85b79bd42cc",
+    "assets/figures/capture-sensitivity-correlation.tex": "f2084b0d2b08f1a3057f36c7b504d669125028e7fdba999d72a6e24d8321285c",
+    "assets/figures/capture-sensitivity-availability.tex": "8427d309a74355aff9dbacd0e0da2e62d40d817a52bd771cce93b0a28c5a0105",
+    "assets/figures/capture-sensitivity-data/availability-admit_rate-0.csv": "6736387406516686821fb7946b5626c9d170281654b4d5688118ebc751c7423e",
+    "assets/figures/capture-sensitivity-data/availability-admit_rate-1.csv": "7e5698d13572820df21e8fa46efd17852cfe298559835085f131c0537f05c62b",
+    "assets/figures/capture-sensitivity-data/availability-inconclusive-0.csv": "cee926ce5afaa5deca9c33e78398304535892c3515ae9a768a6910dd0439e452",
+    "assets/figures/capture-sensitivity-data/availability-inconclusive-1.csv": "70e31a4df0789af3196e7e0915f62c886388945d0b09fba142276b6392af5107",
+    "assets/figures/capture-sensitivity-data/correlation-1_of_4.csv": "34785a720932be3886e28df327e0bb7ad4c0522006b6d32bb7ca9e2f73842598",
+    "assets/figures/capture-sensitivity-data/correlation-2_of_4.csv": "bfb035e7a3a8ea5012e67818768cc1a76a54efd7170e685038999f73608b0780",
+    "assets/figures/capture-sensitivity-data/correlation-3_of_4.csv": "f0a4c078a73024fd77554175114d85fbd05ce28f4ad36b5652ab703e555b0470",
+    "assets/figures/capture-sensitivity-data/correlation-4_of_4.csv": "169cd029cee954bc5fe6c12961a23427e94d586a606ca694715bc97f90969eb3",
+    "assets/figures/capture-sensitivity-data/correlation-single_preselected.csv": "ed953e9d591e1d5d079995ae5a0cfa4b7adfcb7d65dc4351d564aae2238b7797"
+  }
+}

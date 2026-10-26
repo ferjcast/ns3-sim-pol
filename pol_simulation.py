@@ -174,8 +174,9 @@ class RfFingerprintSensor:
         v2 = np.array([fp2[k] for k in common_keys])
 
         # Normalize to positive values for cosine similarity
-        v1 = v1 - min(v1.min(), v2.min()) + 1
-        v2 = v2 - min(v1.min(), v2.min()) + 1
+        offset = min(v1.min(), v2.min())
+        v1 = v1 - offset + 1
+        v2 = v2 - offset + 1
 
         dot = np.dot(v1, v2)
         norm = np.linalg.norm(v1) * np.linalg.norm(v2)

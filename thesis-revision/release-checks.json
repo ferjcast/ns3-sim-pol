@@ -1,0 +1,10 @@
+{
+  "date": "2026-10-26",
+  "baseline_exact_match": true,
+  "sensitivity_exact_match": true,
+  "proximity_grid_exact_match": true,
+  "table_and_plot_sources_exact_match": true,
+  "figures_and_report_compiled": true,
+  "source_revision": "2a0c66a63e920ed3dbb1cfa3ebf476392da2f98b",
+  "note": "Release checks used the new reproduction runner against the pinned historical source. PDF bytes may differ because of timestamps."
+}

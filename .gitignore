@@ -6,3 +6,5 @@ venv/
 *.png
 pol-results.json
 pol-results.csv
+
+.venv/
