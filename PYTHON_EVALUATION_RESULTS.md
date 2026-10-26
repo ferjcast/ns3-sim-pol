@@ -67,7 +67,7 @@ This Python implementation uses SimPy for discrete-event simulation, providing a
 ## Running the Simulation
 
 ```bash
-cd /Users/fernando/Downloads/ns3-sim-pol
+cd ./ns3-sim-pol
 source venv/bin/activate
 
 # Run all scenarios
