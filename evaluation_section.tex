@@ -1,7 +1,7 @@
 \section{Evaluation}
 \label{sec:evaluation}
 
-To empirically validate the security resilience and operational reliability of active adversarial attempts (such as distance fraud), we developed a discrete-event simulation framework using Python and SimPy. This approach allows us to strictly quantify the system's performance under stochastic environmental conditions and prove the protocol's capacity to serve as a robust trust anchor. This validation establishes that the witnessing zone architecture offers distinct security value over conventional localization methods, particularly for high-stakes applications like verifiable supply chain tracking.
+To systematically evaluate the security resilience and operational reliability of active adversarial attempts (such as distance fraud), as well as to evaluate specific admission policies such as proximity-based and visual verification policies, we developed a discrete-event simulation framework using Python and SimPy. This approach allows us to strictly quantify the system's performance under stochastic environmental conditions and prove the protocol's capacity to serve as a robust trust anchor. This validation establishes that the witnessing zone architecture offers distinct security value over conventional localization methods, particularly for high-stakes applications like verifiable supply chain tracking.
 
 \subsection{Simulation Setup}
 
@@ -78,3 +78,7 @@ In addition to RF constraints, we validated the \textit{VisualVerificationPolicy
     \item \textbf{Valid Context:} When the required "Red Car" object was present, the system maintained a high admission rate (80\%).
     \item \textbf{Invalid Context:} When the object was removed, admission dropped to \textbf{0\%}, proving that the witnessing consensus correctly enforces environmental prerequisites.
 \end{itemize}
+
+\subsection{Conclusion}
+
+The simulation results demonstrate that our witnessing zone protocol successfully achieves its design objectives. First, the system exhibits robust security resilience, rejecting 100\% of distance fraud attempts from adversaries outside the zone. Second, the protocol supports flexible admission policies, with both proximity-based and visual verification policies correctly enforcing their respective constraints. Third, the probabilistic behavior at the zone boundary validates that the system accurately models real-world sensor noise, providing predictable admission gradients rather than brittle binary decisions. These results confirm that the proposed architecture provides a reliable and extensible foundation for location-based attestation in security-critical applications.

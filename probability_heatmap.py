@@ -13,6 +13,7 @@ Admission requires k>=3 witnesses to measure distance <= 20m.
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.patheffects as pe
 from matplotlib.patches import Circle
 import math
 from itertools import combinations
@@ -121,7 +122,8 @@ def plot_heatmap(X, Y, prob_grid, witnesses, output_file: str = "probability_hea
     
     # Add colorbar
     cbar = plt.colorbar(im, ax=ax, shrink=0.8)
-    cbar.set_label('Admission Probability', fontsize=12)
+    cbar.set_label('Admission Probability', fontsize=15)
+    cbar.ax.tick_params(labelsize=13)
     
     # Plot witness positions
     ax.scatter(witnesses[:, 0], witnesses[:, 1], c='blue', s=150, marker='^', 
@@ -130,7 +132,7 @@ def plot_heatmap(X, Y, prob_grid, witnesses, output_file: str = "probability_hea
     # Label witnesses
     for i, (wx, wy) in enumerate(witnesses):
         ax.annotate(f'W{i}', (wx, wy), xytext=(5, 5), textcoords='offset points',
-                    fontsize=10, fontweight='bold', color='white')
+                    fontsize=13, fontweight='bold', color='white')
     
     # Draw 20m range circles around each witness (faintly)
     for i, (wx, wy) in enumerate(witnesses):
@@ -140,31 +142,50 @@ def plot_heatmap(X, Y, prob_grid, witnesses, output_file: str = "probability_hea
         ax.add_patch(circle)
     
     # Mark key positions
+    # Baseline position (honest prover inside zone)
+    ax.plot(5, 5, '*', color='lime', markersize=18, markeredgecolor='black', 
+            markeredgewidth=1.5, zorder=6)
+    ax.annotate('Baseline\n(5, 5)', (5, 5), xytext=(10, 15), 
+                textcoords='offset points', fontsize=13, fontweight='bold',
+                color='black', ha='left',
+                path_effects=[pe.withStroke(linewidth=2, foreground='white')])
+    
     # Edge Case position
     ax.plot(9.28, 0, 'o', color='orange', markersize=12, markeredgecolor='black', 
             markeredgewidth=2, zorder=6)
     ax.annotate('Edge Case\n(9.28, 0)', (9.28, 0), xytext=(15, 20), 
-                textcoords='offset points', fontsize=10, fontweight='bold',
-                color='orange', ha='left')
+                textcoords='offset points', fontsize=13, fontweight='bold',
+                color='black', ha='left',
+                path_effects=[pe.withStroke(linewidth=2, foreground='white')])
     
+    # Distance Fraud position (attacker at 30, 30 — outside plot)
+    # Show an indicator at the corner of the plot pointing toward (30,30)
+    ax.plot(13, 13, 'X', color='red', markersize=14, markeredgecolor='white', 
+            markeredgewidth=1.5, zorder=6)
+    ax.annotate('Distance Fraud\n(13, 13)', (13, 13), xytext=(-15, -10), 
+                textcoords='offset points', fontsize=13, fontweight='bold',
+                color='black', ha='right',
+                arrowprops=dict(arrowstyle='->', color='black', lw=2),
+                path_effects=[pe.withStroke(linewidth=2, foreground='white')])
     
     # Contour lines for 10%, 50%, 90% probability
     contour_levels = [0.1, 0.5, 0.9]
     CS = ax.contour(X, Y, prob_grid, levels=contour_levels, colors=['red', 'orange', 'green'],
                     linewidths=2, linestyles=['--', '-', '--'])
-    ax.clabel(CS, inline=True, fontsize=10, fmt='%.0f%%', 
+    ax.clabel(CS, inline=True, fontsize=13, fmt='%.0f%%', 
               manual=[(8, 0), (9, 0), (10, 0)])
     
     # Axis settings
     ax.set_xlim(-15, 15)
     ax.set_ylim(-15, 15)
-    ax.set_xlabel('X Position (m)', fontsize=12)
-    ax.set_ylabel('Y Position (m)', fontsize=12)
+    ax.set_xlabel('X Position (m)', fontsize=15)
+    ax.set_ylabel('Y Position (m)', fontsize=15)
+    ax.tick_params(axis='both', labelsize=13)
     # ax.set_title('PoL Admission Probability Heatmap\n(Analytical Model: k≥3/4 witnesses within 20m)', 
     #              fontsize=14, fontweight='bold')
     ax.set_aspect('equal')
     ax.grid(True, alpha=0.3)
-    ax.legend(loc='upper right')
+    ax.legend(loc='upper left', fontsize=13)
     
     plt.tight_layout()
     plt.savefig(output_file, dpi=150, bbox_inches='tight')
