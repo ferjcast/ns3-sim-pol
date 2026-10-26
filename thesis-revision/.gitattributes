@@ -1,0 +1,5 @@
+# Preserve the exact bytes covered by the artefact manifest, including CSV CRLF.
+* -text
+*.csv whitespace=cr-at-eol
+# Unified-diff context lines can consist of one significant space.
+*.patch -whitespace

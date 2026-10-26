@@ -10,6 +10,7 @@
     "PYTHONHASHSEED": "0"
   },
   "files_sha256": {
+    ".gitattributes": "8c8ae05dc1be5ca24734a558bf3864c83805e1e7edf8fcdd14d7707fd0abaefd",
     ".gitignore": "ed3ed782e22a2cdce3ac3760e6bf8aedba2d8ce46c53302dc150271b21ef2447",
     "README.md": "1e5b48034df895d0fd452414adac2c35802be87c9b7c36398205c7f57aa09631",
     "assets/figures/capture-proximity-map.pdf": "73ca31b76acb75158d2ef4ea1bd20b15361cded92ffbc11e2857585428b26b7f",
